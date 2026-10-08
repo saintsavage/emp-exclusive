@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getPost, myReactions } from "@/lib/emp/api";
-import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import { localGuestId } from "@/lib/emp/guest";
 import { PostCard } from "@/components/feed/post-card";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -17,7 +17,6 @@ export const Route = createFileRoute("/post/$postId")({
 function PostPage() {
   const { postId } = Route.useParams();
   const id = Number(postId);
-  const { user } = useCurrentUserState();
   const initial = Route.useLoaderData();
   const post = useQuery({
     queryKey: ["post", id],
@@ -27,8 +26,7 @@ function PostPage() {
   });
   const mine = useQuery({
     queryKey: ["myReactions"],
-    queryFn: () => myReactions(),
-    enabled: Boolean(user),
+    queryFn: () => myReactions({ data: { guestId: localGuestId() } }),
   });
 
   const myKinds = (mine.data ?? [])

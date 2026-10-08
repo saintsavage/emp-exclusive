@@ -9,6 +9,8 @@ export const HOUSE = {
   tagline: "EMP · Francistown, Botswana",
   disciplines: "Music · Fashion · Media · House",
   subscribeWeight: 19,
+  visitWeight: 29,
+  handleLockMs: 20 * 60 * 60 * 1000,
   storyLifeMs: 24 * 60 * 60 * 1000,
 } as const;
 

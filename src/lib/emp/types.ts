@@ -51,6 +51,7 @@ export type NotificationItem = {
 };
 
 export type PageStats = {
-  followers: number;
+  visits: number;
+  loves: number;
   posts: number;
 };

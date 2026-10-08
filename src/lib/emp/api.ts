@@ -3,6 +3,7 @@ import { z } from "zod";
 import { authMiddleware } from "@/lib/auth/middleware";
 import { getSql } from "@/lib/db";
 import { HOUSE } from "@/lib/emp/house";
+import { ensureGuestId } from "@/lib/emp/guest.server";
 import type { Comment, Member, NotificationItem, PageStats, Post, PostKind } from "./types";
 
 type PostRow = {
@@ -57,15 +58,40 @@ const POST_SELECT = `
   from posts p
 `;
 
-async function authorProfile(userId: string) {
+async function guestRow(guestId: string) {
   const sql = await getSql();
-  const rows = await sql<{ name: string; email: string; image: string | null }>`
-    select name, email, image from "user" where id = ${userId} limit 1
+  const rows = await sql<{ handle: string; handle_set_at: string | Date | null }>`
+    select handle, handle_set_at from guests where id = ${guestId} limit 1
   `;
-  const user = rows[0];
-  if (!user) return { name: "Member", image: null as string | null };
-  const name = user.name?.trim() || user.email?.split("@")[0] || "Member";
-  return { name, image: user.image };
+  const row = rows[0];
+  const handle = row?.handle?.trim() ?? "";
+  const setAt = row?.handle_set_at ? new Date(row.handle_set_at).getTime() : 0;
+  const lockedUntil = setAt ? setAt + HOUSE.handleLockMs : 0;
+  const locked = Boolean(handle) && Date.now() < lockedUntil;
+  return { handle, lockedUntil: locked ? lockedUntil : 0, locked };
+}
+
+function cleanHandle(raw: string) {
+  const handle = raw.trim().replace(/\s+/g, " ").slice(0, 24);
+  if (handle.length < 2) throw new Error("Pick a name with at least 2 letters.");
+  if (!/^[\p{L}\p{N} ._\-']+$/u.test(handle)) throw new Error("That name has characters the house will not take.");
+  return handle;
+}
+
+async function pageStats(): Promise<PageStats> {
+  const sql = await getSql();
+  const rows = await sql<{ visits: number; loves: number; posts: number }>`
+    select
+      (select count(*)::int from visits) as visits,
+      (select value::int from house_counters where id = 'loves') as loves,
+      (select count(*)::int from posts where kind <> 'story') as posts
+  `;
+  const row = rows[0];
+  return {
+    visits: (Number(row?.visits ?? 0) || 0) * HOUSE.visitWeight,
+    loves: Number(row?.loves ?? 0) || 0,
+    posts: Number(row?.posts ?? 0) || 0,
+  };
 }
 
 export const listMembers = createServerFn({ method: "GET" }).handler(async () => {
@@ -90,20 +116,55 @@ export const listMembers = createServerFn({ method: "GET" }).handler(async () =>
   );
 });
 
-export const getPageStats = createServerFn({ method: "GET" }).handler(async () => {
-  const sql = await getSql();
-  const rows = await sql<{ followers: number; posts: number }>`
-    select
-      (select count(*)::int from follows) as followers,
-      (select count(*)::int from posts where kind <> 'story') as posts
-  `;
-  const row = rows[0];
-  const stats: PageStats = {
-    followers: Number(row?.followers ?? 0) * HOUSE.subscribeWeight,
-    posts: Number(row?.posts ?? 0),
-  };
-  return stats;
-});
+export const getPageStats = createServerFn({ method: "GET" }).handler(async () => pageStats());
+
+const GuestId = z.object({ guestId: z.string().max(40).optional() });
+
+export const pingVisit = createServerFn({ method: "POST" })
+  .validator(GuestId)
+  .handler(async ({ data }) => {
+    const guestId = await ensureGuestId(data.guestId);
+    const sql = await getSql();
+    await sql`
+      insert into visits (guest_id) values (${guestId})
+      on conflict (guest_id) do nothing
+    `;
+    return pageStats();
+  });
+
+export const tapLove = createServerFn({ method: "POST" })
+  .validator(GuestId)
+  .handler(async ({ data }) => {
+    await ensureGuestId(data.guestId);
+    const sql = await getSql();
+    await sql`update house_counters set value = value + 1 where id = 'loves'`;
+    return pageStats();
+  });
+
+export const guestProfile = createServerFn({ method: "GET" })
+  .validator(GuestId)
+  .handler(async ({ data }) => {
+    const guestId = await ensureGuestId(data.guestId);
+    const row = await guestRow(guestId);
+    return { handle: row.handle, locked: row.locked, lockedUntil: row.lockedUntil };
+  });
+
+export const setGuestHandle = createServerFn({ method: "POST" })
+  .validator(z.object({ handle: z.string().min(2).max(24), guestId: z.string().max(40).optional() }))
+  .handler(async ({ data }) => {
+    const guestId = await ensureGuestId(data.guestId);
+    const row = await guestRow(guestId);
+    if (row.locked) throw new Error("That name is locked for 20 hours.");
+    const handle = cleanHandle(data.handle);
+    const sql = await getSql();
+    await sql`
+      update guests
+      set handle = ${handle}, handle_set_at = now()
+      where id = ${guestId}
+    `;
+    return { handle, locked: true, lockedUntil: Date.now() + HOUSE.handleLockMs };
+  });
+
 
 export const listPosts = createServerFn({ method: "GET" })
   .validator(z.object({ kind: z.enum(["all", "update", "photo", "video", "story"]) }))
@@ -160,11 +221,12 @@ export const listComments = createServerFn({ method: "GET" })
   });
 
 export const myReactions = createServerFn({ method: "GET" })
-  .middleware([authMiddleware])
-  .handler(async ({ context }) => {
+  .validator(GuestId)
+  .handler(async ({ data }) => {
+    const guestId = await ensureGuestId(data.guestId);
     const sql = await getSql();
     return sql<{ post_id: number; kind: string }>`
-      select post_id, kind from reactions where user_id = ${context.userId}
+      select post_id, kind from reactions where user_id = ${guestId}
     `;
   });
 
@@ -225,43 +287,68 @@ export const createPost = createServerFn({ method: "POST" })
   });
 
 export const addComment = createServerFn({ method: "POST" })
-  .middleware([authMiddleware])
-  .validator(z.object({ postId: z.number(), body: z.string().min(1).max(1000) }))
-  .handler(async ({ context, data }) => {
+  .validator(
+    z.object({
+      postId: z.number(),
+      body: z.string().min(1).max(1000),
+      handle: z.string().max(24).optional(),
+      guestId: z.string().max(40).optional(),
+    }),
+  )
+  .handler(async ({ data }) => {
     const body = data.body.trim();
     if (!body) throw new Error("Write a comment.");
-    const profile = await authorProfile(context.userId);
+    const guestId = await ensureGuestId(data.guestId);
+    let profile = await guestRow(guestId);
+    if (!profile.handle) {
+      if (!data.handle?.trim()) throw new Error("Write a name first.");
+      profile = {
+        handle: cleanHandle(data.handle),
+        locked: true,
+        lockedUntil: Date.now() + HOUSE.handleLockMs,
+      };
+      const sqlSet = await getSql();
+      await sqlSet`
+        update guests
+        set handle = ${profile.handle}, handle_set_at = now()
+        where id = ${guestId}
+      `;
+    }
     const sql = await getSql();
     await sql`
       insert into comments (post_id, user_id, author_name, author_avatar, body)
-      values (${data.postId}, ${context.userId}, ${profile.name}, ${profile.image}, ${body})
+      values (${data.postId}, ${guestId}, ${profile.handle}, ${null}, ${body})
     `;
     return { ok: true };
   });
 
 export const toggleReaction = createServerFn({ method: "POST" })
-  .middleware([authMiddleware])
-  .validator(z.object({ postId: z.number(), kind: z.enum(["like", "love", "fire"]) }))
-  .handler(async ({ context, data }) => {
+  .validator(
+    z.object({
+      postId: z.number(),
+      kind: z.enum(["like", "love", "fire"]),
+      guestId: z.string().max(40).optional(),
+    }),
+  )
+  .handler(async ({ data }) => {
+    const guestId = await ensureGuestId(data.guestId);
     const sql = await getSql();
     const existing = await sql<{ id: number }>`
       select id from reactions
-      where post_id = ${data.postId} and user_id = ${context.userId} and kind = ${data.kind}
+      where post_id = ${data.postId} and user_id = ${guestId} and kind = ${data.kind}
       limit 1
     `;
     if (existing[0]) {
-      await sql`
-        delete from reactions
-        where id = ${existing[0].id} and user_id = ${context.userId}
-      `;
+      await sql`delete from reactions where id = ${existing[0].id} and user_id = ${guestId}`;
       return { on: false };
     }
     await sql`
       insert into reactions (post_id, user_id, kind)
-      values (${data.postId}, ${context.userId}, ${data.kind})
+      values (${data.postId}, ${guestId}, ${data.kind})
     `;
     return { on: true };
   });
+
 
 export const toggleFollow = createServerFn({ method: "POST" })
   .middleware([authMiddleware])

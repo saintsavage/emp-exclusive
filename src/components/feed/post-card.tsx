@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Link, useNavigate, useRouteContext } from "@tanstack/react-router";
-import { Flame, Heart, MessageCircle, Share2, Star, Trash2 } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { Flame, Heart, MessageCircle, Share2, Star } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { useCurrentUser, useCurrentUserState } from "@/lib/auth/use-current-user";
-import { addComment, deletePost, listComments, toggleReaction } from "@/lib/emp/api";
+import { addComment, guestProfile, listComments, setGuestHandle, toggleReaction } from "@/lib/emp/api";
+import { localGuestId } from "@/lib/emp/guest";
 import type { Post, ReactionKind } from "@/lib/emp/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -56,7 +56,6 @@ export function PostCard({
           </div>
           <p className="text-xs text-muted">{formatStamp(post.createdAt)}</p>
         </div>
-        <OwnDelete post={post} />
       </header>
 
       <div className={cn(split && "sm:grid sm:grid-cols-2 sm:items-stretch")}>
@@ -162,21 +161,15 @@ function ReactionButton({
   label: string;
   icon: typeof Heart;
 }) {
-  const navigate = useNavigate();
-  const { user } = useCurrentUserState();
   const queryClient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: () => toggleReaction({ data: { postId, kind } }),
+    mutationFn: () => toggleReaction({ data: { postId, kind, guestId: localGuestId() } }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["posts"] });
       void queryClient.invalidateQueries({ queryKey: ["post", postId] });
       void queryClient.invalidateQueries({ queryKey: ["myReactions"] });
     },
-    onError: (err) => {
-      if (err instanceof Error && err.message === "Unauthorized") {
-        void navigate({ to: "/login" });
-        return;
-      }
+    onError: () => {
       toast.error("Could not react.");
     },
   });
@@ -186,13 +179,7 @@ function ReactionButton({
       type="button"
       aria-label={label}
       aria-pressed={on}
-      onClick={() => {
-        if (!user) {
-          void navigate({ to: "/login" });
-          return;
-        }
-        mutation.mutate();
-      }}
+      onClick={() => mutation.mutate()}
       className={cn(
         "flex h-11 items-center gap-2 rounded-md px-3 text-sm transition-colors duration-150",
         on ? "text-fg" : "text-muted hover:text-fg",
@@ -205,27 +192,52 @@ function ReactionButton({
 }
 
 function CommentThread({ postId }: { postId: number }) {
-  const { sessionUser } = useRouteContext({ from: "__root__" });
-  const { user, isPending } = useCurrentUserState();
-  const waitingForKnownUser = isPending && sessionUser != null;
   const queryClient = useQueryClient();
   const [text, setText] = useState("");
+  const [name, setName] = useState("");
+  const guest = useQuery({
+    queryKey: ["guest"],
+    queryFn: () => guestProfile({ data: { guestId: localGuestId() } }),
+  });
   const comments = useQuery({
     queryKey: ["comments", postId],
     queryFn: () => listComments({ data: { postId } }),
   });
   const mutation = useMutation({
-    mutationFn: () => addComment({ data: { postId, body: text } }),
+    mutationFn: async () => {
+      const current = guest.data?.handle ?? "";
+      const next = name.trim();
+      if (!current) {
+        if (next.length < 2) throw new Error("Write a name first.");
+      } else if (!locked && next && next !== current) {
+        await setGuestHandle({ data: { handle: next, guestId: localGuestId() } });
+      }
+      return addComment({
+        data: {
+          postId,
+          body: text,
+          handle: current ? undefined : next,
+          guestId: localGuestId(),
+        },
+      });
+    },
     onSuccess: () => {
       setText("");
       void queryClient.invalidateQueries({ queryKey: ["comments", postId] });
       void queryClient.invalidateQueries({ queryKey: ["posts"] });
       void queryClient.invalidateQueries({ queryKey: ["post", postId] });
+      void queryClient.invalidateQueries({ queryKey: ["guest"] });
     },
     onError: (err) => {
       toast.error(err instanceof Error ? err.message : "Could not comment.");
     },
   });
+
+  const handle = guest.data?.handle;
+  const locked = guest.data?.locked;
+  const lockedLabel = guest.data?.lockedUntil
+    ? new Date(guest.data.lockedUntil).toLocaleString([], { hour: "2-digit", minute: "2-digit" })
+    : null;
 
   return (
     <div className="space-y-3 border-t border-line px-4 py-4 sm:px-5">
@@ -245,56 +257,47 @@ function CommentThread({ postId }: { postId: number }) {
         </div>
       ))}
 
-      {waitingForKnownUser ? null : user ? (
-        <form
-          className="flex gap-2"
-          onSubmit={(event) => {
-            event.preventDefault();
-            if (!text.trim()) return;
-            mutation.mutate();
-          }}
-        >
+      <form
+        className="space-y-2"
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (!text.trim()) return;
+          mutation.mutate();
+        }}
+      >
+        {handle && locked ? (
+          <p className="text-xs text-muted">
+            Commenting as <span className="text-fg">{handle}</span>
+            {lockedLabel ? ` · name locked until ${lockedLabel}` : " · name locked for 20 hours"}
+          </p>
+        ) : (
+          <Input
+            value={name.length > 0 ? name : handle || ""}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Your name in the house"
+            maxLength={24}
+            required
+          />
+        )}
+        <div className="flex gap-2">
           <Input
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Write a comment…"
           />
-          <Button type="submit" size="sm" disabled={mutation.isPending || !text.trim()}>
+          <Button
+            type="submit"
+            size="sm"
+            disabled={
+              mutation.isPending ||
+              !text.trim() ||
+              (!(handle && locked) && (name || handle || "").trim().length < 2)
+            }
+          >
             Send
           </Button>
-        </form>
-      ) : (
-        <p className="text-sm text-muted">
-          <Link to="/login" className="underline underline-offset-4">
-            Sign in
-          </Link>{" "}
-          to comment.
-        </p>
-      )}
+        </div>
+      </form>
     </div>
-  );
-}
-
-function OwnDelete({ post }: { post: Post }) {
-  const user = useCurrentUser();
-  const queryClient = useQueryClient();
-  const mutation = useMutation({
-    mutationFn: () => deletePost({ data: { id: post.id } }),
-    onSuccess: () => {
-      toast.success("Removed.");
-      void queryClient.invalidateQueries({ queryKey: ["posts"] });
-    },
-  });
-  if (!user || user.id !== post.userId) return null;
-  return (
-    <Button
-      variant="ghost"
-      size="icon-sm"
-      aria-label="Delete post"
-      onClick={() => mutation.mutate()}
-      disabled={mutation.isPending}
-    >
-      <Trash2 className="size-4" />
-    </Button>
   );
 }

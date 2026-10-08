@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { FollowButton } from "@/components/site-shell";
+import { HouseLove } from "@/components/site-shell";
 import { HOUSE } from "@/lib/emp/house";
 
 export const Route = createFileRoute("/about")({ component: AboutPage });
@@ -23,9 +23,9 @@ function AboutPage() {
             {HOUSE.founded}. The foundation is holding. We are yet to rise.
           </p>
           <p>
-            This page is the official wire. EMP Exclusive writes every post. You can watch it as a
-            guest. Sign in to subscribe, react, and comment. A tap-in app is coming — same house,
-            closer to your pocket.
+            This page is the official wire. EMP Exclusive writes every post. You watch, love, and
+            comment as a guest — pick a name, it stays yours for 20 hours. A tap-in app is coming —
+            same house, closer to your pocket.
           </p>
         </div>
       </article>
@@ -60,7 +60,7 @@ function AboutPage() {
       </dl>
 
       <div className="mt-10">
-        <FollowButton />
+        <HouseLove />
       </div>
     </main>
   );

@@ -4,8 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { getPageStats, listMembers, listPosts, myReactions } from "@/lib/emp/api";
 import type { Post } from "@/lib/emp/types";
 import { HOUSE, isLiveStory } from "@/lib/emp/house";
-import { useCurrentUserState } from "@/lib/auth/use-current-user";
-import { FollowButton } from "@/components/site-shell";
+import { localGuestId } from "@/lib/emp/guest";
+import { HouseLove } from "@/components/site-shell";
 import { ClosedWire } from "@/components/feed/composer";
 import { PostCard } from "@/components/feed/post-card";
 import { StoryViewer } from "@/components/feed/stories-strip";
@@ -38,7 +38,6 @@ const FILTERS = [
 function Home() {
   const initial = Route.useLoaderData();
   const [filter, setFilter] = useState<(typeof FILTERS)[number]["id"]>("all");
-  const { user } = useCurrentUserState();
 
   const posts = useQuery({
     queryKey: ["posts", filter],
@@ -62,8 +61,7 @@ function Home() {
   });
   const mine = useQuery({
     queryKey: ["myReactions"],
-    queryFn: () => myReactions(),
-    enabled: Boolean(user),
+    queryFn: () => myReactions({ data: { guestId: localGuestId() } }),
   });
 
   const mineMap = new Map<number, string[]>();
@@ -164,7 +162,7 @@ function Home() {
           <section className="rounded-xl bg-surface p-5 shadow-[var(--shadow-border)]">
             <p className="text-xs tracking-[0.22em] text-subtle uppercase">Next</p>
             <p className="mt-2 font-display text-2xl leading-tight">Still on the foundation.</p>
-            <p className="mt-3 text-sm text-muted">Subscribe. The rise lands here first.</p>
+            <p className="mt-3 text-sm text-muted">The rise lands here first. Leave a name and speak.</p>
           </section>
         </aside>
       </div>
@@ -176,7 +174,7 @@ function Cover({
   stats,
   stories,
 }: {
-  stats?: { followers: number; posts: number };
+  stats?: { visits: number; loves: number; posts: number };
   stories: Post[];
 }) {
   const [index, setIndex] = useState<number | null>(null);
@@ -230,14 +228,16 @@ function Cover({
               </div>
               <p className="mt-2 text-sm text-muted">{HOUSE.tagline}</p>
               <p className="mt-1 text-sm text-subtle">
-                <span className="tabular-nums text-fg">{stats?.followers ?? 0}</span> subscribed
+                <span className="tabular-nums text-fg">{stats?.visits ?? 0}</span> visits
+                <span className="mx-2">·</span>
+                <span className="tabular-nums text-fg">{stats?.loves ?? 0}</span> loves
                 <span className="mx-2">·</span>
                 <span className="tabular-nums text-fg">{stats?.posts ?? 0}</span> posts
               </p>
             </div>
           </div>
           <div className="flex gap-2 pb-1">
-            <FollowButton />
+            <HouseLove />
             <Button
               variant="outline"
               onClick={async () => {

@@ -1,22 +1,12 @@
-import { useState } from "react";
-import { Link, useRouterState, useRouteContext } from "@tanstack/react-router";
-import { Bell, Menu } from "lucide-react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { SignedIn, SignedOut, UserButton } from "@/lib/auth/gates";
-import { useCurrentUserState } from "@/lib/auth/use-current-user";
-import { followState, listNotifications, markNotificationsRead, toggleFollow } from "@/lib/emp/api";
+import { useEffect, useState } from "react";
+import { Link, useRouterState } from "@tanstack/react-router";
+import { Heart, Menu } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getPageStats, pingVisit, tapLove } from "@/lib/emp/api";
+import { localGuestId } from "@/lib/emp/guest";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Skeleton } from "@/components/ui/skeleton";
-import { formatStamp, cn } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 const NAV = [
   { to: "/", label: "Feed" },
@@ -25,19 +15,20 @@ const NAV = [
   { to: "/about", label: "House Notes" },
 ] as const;
 
-function useResolvedSession() {
-  const { sessionUser } = useRouteContext({ from: "__root__" });
-  const { user, isPending } = useCurrentUserState();
-  const waitingForKnownUser = isPending && sessionUser != null;
-  return {
-    user,
-    waiting: waitingForKnownUser,
-    signedOut: !user && !waitingForKnownUser,
-  };
-}
-
 export function SiteShell({ children }: { children: React.ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    void pingVisit({ data: { guestId: localGuestId() } })
+      .then((stats) => {
+        queryClient.setQueryData(["stats"], stats);
+      })
+      .catch(() => {
+        /* first paint can miss a cookie; next tap still counts */
+      });
+  }, [queryClient]);
+
   return (
     <div className="min-h-screen bg-bg text-fg">
       <Header />
@@ -88,8 +79,7 @@ function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-1">
-          <NotifyBell />
-          <AuthSlot />
+          <HouseLove compact />
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden" aria-label="Menu">
@@ -110,9 +100,6 @@ function Header() {
                   </Link>
                 ))}
               </nav>
-              <div className="mt-auto pt-8">
-                <UserButton />
-              </div>
             </SheetContent>
           </Sheet>
         </div>
@@ -121,116 +108,33 @@ function Header() {
   );
 }
 
-function AuthSlot() {
-  const { user, waiting, signedOut } = useResolvedSession();
-  if (waiting) return <Skeleton className="size-9 rounded-full" />;
-  if (signedOut || !user) {
-    return (
-      <Button asChild size="sm" variant="outline">
-        <Link to="/login">Sign in</Link>
-      </Button>
-    );
-  }
-  return (
-    <div className="hidden max-w-48 md:block">
-      <UserButton />
-    </div>
-  );
-}
-
-function NotifyBell() {
-  const { user, waiting, signedOut } = useResolvedSession();
+export function HouseLove({ className, compact = false }: { className?: string; compact?: boolean }) {
   const queryClient = useQueryClient();
-  const notes = useQuery({
-    queryKey: ["notifications"],
-    queryFn: () => listNotifications(),
-    enabled: Boolean(user),
-  });
-  const mark = useMutation({
-    mutationFn: () => markNotificationsRead(),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["notifications"] }),
-  });
-
-  if (waiting) return <Skeleton className="size-9 rounded-full" />;
-  if (signedOut || !user) return null;
-
-  const unread = (notes.data ?? []).filter((n) => !n.read).length;
-
-  return (
-    <DropdownMenu
-      onOpenChange={(next) => {
-        if (next && unread > 0) mark.mutate();
-      }}
-    >
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="Notifications" className="relative">
-          <Bell className="size-4" />
-          {unread > 0 ? (
-            <span className="absolute top-2 right-2 size-1.5 rounded-full bg-fg" />
-          ) : null}
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-80">
-        <DropdownMenuLabel>On the wire</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {(notes.data ?? []).length === 0 ? (
-          <p className="px-3 py-6 text-sm text-muted">No pings yet. Subscribe to catch drops.</p>
-        ) : (
-          (notes.data ?? []).slice(0, 8).map((item) => (
-            <DropdownMenuItem key={item.id} asChild>
-              <Link to={item.href || "/"} className="flex flex-col items-start gap-0.5 py-3">
-                <span className="text-sm text-fg">{item.title}</span>
-                <span className="line-clamp-2 text-xs text-muted">{item.body}</span>
-                <span className="text-xs text-subtle">{formatStamp(item.createdAt)}</span>
-              </Link>
-            </DropdownMenuItem>
-          ))
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
-
-export function FollowButton({ className }: { className?: string }) {
-  const { user, waiting, signedOut } = useResolvedSession();
-  const queryClient = useQueryClient();
-  const state = useQuery({
-    queryKey: ["follow"],
-    queryFn: () => followState(),
-    enabled: Boolean(user),
+  const stats = useQuery({
+    queryKey: ["stats"],
+    queryFn: () => getPageStats(),
   });
   const mutate = useMutation({
-    mutationFn: () => toggleFollow(),
-    onSuccess: async (res) => {
-      await queryClient.invalidateQueries({ queryKey: ["follow"] });
-      await queryClient.invalidateQueries({ queryKey: ["stats"] });
-      await queryClient.invalidateQueries({ queryKey: ["notifications"] });
-      if (res.following && typeof Notification !== "undefined" && Notification.permission === "default") {
-        void Notification.requestPermission();
-      }
+    mutationFn: () => tapLove({ data: { guestId: localGuestId() } }),
+    onSuccess: (next) => {
+      queryClient.setQueryData(["stats"], next);
     },
   });
+  const loves = stats.data?.loves ?? 0;
 
-  if (waiting) return <Skeleton className={cn("h-11 w-28 rounded-md", className)} />;
-  if (signedOut || !user) {
-    return (
-      <Button asChild className={className}>
-        <Link to="/login">Subscribe</Link>
-      </Button>
-    );
-  }
-
-  const on = state.data?.following;
   return (
     <Button
       className={className}
-      variant={on ? "outline" : "default"}
+      variant={compact ? "ghost" : "default"}
+      size={compact ? "sm" : "default"}
       onClick={() => mutate.mutate()}
-      disabled={mutate.isPending || state.isPending}
+      aria-label="Send love to the house"
     >
-      {on ? "Subscribed" : "Subscribe"}
+      <Heart className={cn("size-4", loves > 0 && "fill-fg")} />
+      <span className="tabular-nums">{loves}</span>
+      {compact ? null : <span>Love</span>}
     </Button>
   );
 }
 
-export { SignedIn, SignedOut };
+export { HouseLove as FollowButton };
