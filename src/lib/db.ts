@@ -93,7 +93,13 @@ function createNeonSql(): Promise<Sql> {
     types.setTypeParser(OID_INT8, Number);
     types.setTypeParser(OID_DATE, identity);
     types.setTypeParser(OID_INTERVAL, identity);
-    const pool = new Pool({ connectionString: databaseUrl });
+    const pool = new Pool({
+      connectionString: databaseUrl,
+      connectionTimeoutMillis: 12_000,
+      ssl: /localhost|127\.0\.0\.1/.test(databaseUrl ?? "")
+        ? undefined
+        : { rejectUnauthorized: false },
+    });
     return toSql(async <T>(text: string, params: unknown[]) => {
       const res = await pool.query(text, params);
       return res.rows as T[];
@@ -176,7 +182,15 @@ async function createSql(): Promise<Sql> {
         "or a server route loader, never from client code.",
     );
   }
-  return dbSource === "neon" ? createNeonSql() : createPgliteSql();
+  if (dbSource !== "neon") return createPgliteSql();
+  try {
+    const sql = await createNeonSql();
+    await sql`select 1 as ok`;
+    return sql;
+  } catch (err) {
+    console.error("[db] DATABASE_URL failed, using the built-in database:", err);
+    return createPgliteSql();
+  }
 }
 
 /**

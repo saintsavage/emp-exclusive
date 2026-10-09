@@ -42,8 +42,23 @@ async function main() {
     return;
   }
 
-  const pool = new pg.Pool({ connectionString: databaseUrl, max: 1 });
-  const client = await pool.connect();
+  const pool = new pg.Pool({
+    connectionString: databaseUrl,
+    max: 1,
+    connectionTimeoutMillis: 12_000,
+    ssl: /localhost|127\.0\.0\.1/.test(databaseUrl) ? undefined : { rejectUnauthorized: false },
+  });
+  let client;
+  try {
+    client = await pool.connect();
+  } catch (err) {
+    console.error(
+      "[migrate] database unreachable — site will still build.",
+      err?.message || err,
+    );
+    await pool.end().catch(() => {});
+    return;
+  }
   try {
     await client.query(
       "CREATE TABLE IF NOT EXISTS _migrations (name TEXT PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT now())",
