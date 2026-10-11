@@ -15,6 +15,10 @@ import { EmpIntro } from "@/components/emp-intro";
 import appCss from "../styles.css?url";
 
 const APP_NAME = "EMP Exclusive";
+const SITE_URL = "https://emp-exclusive.vercel.app";
+const SOCIAL_IMAGE = `${SITE_URL}/og-image.svg`;
+const SITE_DESCRIPTION =
+  "EMP Exclusive — EMPIRE, from Francistown. The official house page. Stills, sessions, stories, and drops.";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,12 +39,19 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: APP_NAME },
-      {
-        name: "description",
-        content:
-          "EMP Exclusive — EMPIRE, from Francistown. The official house page. Stills, sessions, stories, and drops.",
-      },
+      { name: "description", content: SITE_DESCRIPTION },
       { name: "theme-color", content: "#0a0a0b" },
+      { property: "og:title", content: APP_NAME },
+      { property: "og:description", content: SITE_DESCRIPTION },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: SITE_URL },
+      { property: "og:image", content: SOCIAL_IMAGE },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: APP_NAME },
+      { name: "twitter:description", content: SITE_DESCRIPTION },
+      { name: "twitter:image", content: SOCIAL_IMAGE },
     ],
     links: [
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
