@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="silver" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.48" stop-color="#c8c8c8"/>
+      <stop offset="1" stop-color="#777777"/>
+    </linearGradient>
+    <radialGradient id="glow">
+      <stop offset="0" stop-color="#8b1c1c" stop-opacity=".28"/>
+      <stop offset="1" stop-color="#8b1c1c" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#090909"/>
+  <circle cx="600" cy="260" r="360" fill="url(#glow)"/>
+  <rect x="38" y="38" width="1124" height="554" rx="2" fill="none" stroke="#454545" stroke-width="1.5"/>
+  <path d="M90 95h120M990 535h120" stroke="#8b1c1c" stroke-width="3"/>
+  <text x="600" y="285" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="154" font-weight="700" letter-spacing="10" fill="url(#silver)">E.M.P</text>
+  <path d="M490 327h220" stroke="#8b1c1c" stroke-width="4"/>
+  <text x="600" y="390" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="600" letter-spacing="13" fill="#f1f1f1">EXCLUSIVE</text>
+  <text x="600" y="452" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" letter-spacing="5" fill="#a6a6a6">THE HOUSE. THE EMPIRE.</text>
+  <path d="M600 485l8 8-8 8-8-8z" fill="#8b1c1c"/>
+</svg>
