@@ -15,10 +15,13 @@ import { EmpIntro } from "@/components/emp-intro";
 import appCss from "../styles.css?url";
 
 const APP_NAME = "EMP Exclusive";
-const SITE_URL = "https://emp-exclusive.vercel.app";
-const SOCIAL_IMAGE = `${SITE_URL}/og-image.svg`;
-const SITE_DESCRIPTION =
+const FALLBACK_ORIGIN = "https://emp-exclusive-e7cp.vercel.app";
+const SHARE_BLURB =
   "EMP Exclusive — EMPIRE, from Francistown. The official house page. Stills, sessions, stories, and drops.";
+
+function shareOrigin() {
+  return FALLBACK_ORIGIN;
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,37 +37,44 @@ const fetchSessionUser = createServerFn({ method: "GET" }).handler(async () => {
 
 export const Route = createRootRoute({
   beforeLoad: async () => ({ sessionUser: await fetchSessionUser() }),
-  head: () => ({
+  head: () => {
+    const origin = shareOrigin();
+    const image = `${origin}/images/og.jpg`;
+    return {
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: APP_NAME },
-      { name: "description", content: SITE_DESCRIPTION },
+      { name: "description", content: SHARE_BLURB },
       { name: "theme-color", content: "#0a0a0b" },
+      { property: "og:site_name", content: APP_NAME },
       { property: "og:title", content: APP_NAME },
-      { property: "og:description", content: SITE_DESCRIPTION },
+      { property: "og:description", content: SHARE_BLURB },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: SITE_URL },
-      { property: "og:image", content: SOCIAL_IMAGE },
+      { property: "og:url", content: `${origin}/` },
+      { property: "og:image", content: image },
+      { property: "og:image:secure_url", content: image },
+      { property: "og:image:type", content: "image/jpeg" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: "EMP Exclusive" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: APP_NAME },
-      { name: "twitter:description", content: SITE_DESCRIPTION },
-      { name: "twitter:image", content: SOCIAL_IMAGE },
+      { name: "twitter:description", content: SHARE_BLURB },
+      { name: "twitter:image", content: image },
     ],
     links: [
-      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
       { rel: "icon", type: "image/png", href: "/images/avatar.png" },
+      { rel: "apple-touch-icon", href: "/images/avatar.png" },
       { rel: "stylesheet", href: appCss },
       { rel: "manifest", href: "/__grok/manifest.webmanifest" },
-      { rel: "apple-touch-icon", href: "/__grok/icon-180.png" },
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap",
       },
     ],
-  }),
+    };
+  },
   component: RootDocument,
 });
 

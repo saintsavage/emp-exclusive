@@ -1,7 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { listPosts } from "@/lib/emp/api";
 import { postStills } from "@/lib/emp/house";
+import { ZoomImage } from "@/components/feed/lightbox";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/photos")({
@@ -39,18 +40,12 @@ function PhotosPage() {
         <div className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-3">
           {(photos.data ?? []).flatMap((post) =>
             postStills(post).map((src) => (
-              <Link
+              <ZoomImage
                 key={`${post.id}-${src}`}
-                to="/post/$postId"
-                params={{ postId: String(post.id) }}
-                className="group overflow-hidden rounded-lg"
-              >
-                <img
-                  src={src}
-                  alt={post.title || post.body.slice(0, 80)}
-                  className="aspect-still w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.03]"
-                />
-              </Link>
+                src={src}
+                alt={post.title || post.body.slice(0, 80)}
+                className="aspect-still w-full object-cover transition-transform duration-300 ease-out hover:scale-[1.03]"
+              />
             )),
           )}
         </div>

@@ -10,7 +10,7 @@ import { postStills } from "@/lib/emp/house";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { ZoomImage } from "@/components/feed/lightbox";
 import { cn, formatStamp } from "@/lib/utils";
 
 const REACTIONS: { id: ReactionKind; label: string; icon: typeof Heart }[] = [
@@ -71,9 +71,12 @@ export function PostCard({
       {stills.length > 1 ? (
         <div className="grid grid-cols-3 gap-1 px-4 pb-4 sm:px-5">
           {stills.map((src) => (
-            <Link key={src} to="/post/$postId" params={{ postId: String(post.id) }} className="block">
-              <img src={src} alt="" className="aspect-still w-full bg-bg object-cover" />
-            </Link>
+            <ZoomImage
+              key={src}
+              src={src}
+              alt={post.title || "EMP Exclusive still"}
+              className="aspect-still w-full bg-bg object-cover"
+            />
           ))}
         </div>
       ) : null}
@@ -139,16 +142,14 @@ function PostMedia({ post, split = false }: { post: Post; split?: boolean }) {
     );
   }
   return (
-    <Link to="/post/$postId" params={{ postId: String(post.id) }} className="block h-full">
-      <img
-        src={post.mediaUrl ?? ""}
-        alt={post.title || post.body.slice(0, 80)}
-        className={cn(
-          "w-full bg-bg object-cover",
-          split ? "aspect-still h-full min-h-56 sm:aspect-auto sm:min-h-full" : "aspect-still",
-        )}
-      />
-    </Link>
+    <ZoomImage
+      src={post.mediaUrl ?? ""}
+      alt={post.title || post.body.slice(0, 80)}
+      className={cn(
+        "w-full bg-bg object-cover",
+        split ? "aspect-still h-full min-h-56 sm:aspect-auto sm:min-h-full" : "aspect-still",
+      )}
+    />
   );
 }
 
