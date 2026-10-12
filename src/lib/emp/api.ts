@@ -16,6 +16,7 @@ type PostRow = {
   body: string;
   media_url: string | null;
   media_poster: string | null;
+  gallery: string | null;
   is_official: boolean;
   created_at: string | Date;
   like_count: number;
@@ -39,6 +40,7 @@ function mapPost(row: PostRow): Post {
     body: row.body,
     mediaUrl: row.media_url,
     mediaPoster: row.media_poster,
+    gallery: row.gallery ?? "",
     isOfficial: Boolean(row.is_official),
     createdAt: stamp(row.created_at),
     likeCount: Number(row.like_count) || 0,
@@ -50,7 +52,7 @@ function mapPost(row: PostRow): Post {
 
 const POST_SELECT = `
   select p.id, p.user_id, p.author_name, p.author_avatar, p.kind, p.title, p.body,
-         p.media_url, p.media_poster, p.is_official, p.created_at,
+         p.media_url, p.media_poster, p.gallery, p.is_official, p.created_at,
          (select count(*)::int from reactions r where r.post_id = p.id and r.kind = 'like') as like_count,
          (select count(*)::int from reactions r where r.post_id = p.id and r.kind = 'love') as love_count,
          (select count(*)::int from reactions r where r.post_id = p.id and r.kind = 'fire') as fire_count,

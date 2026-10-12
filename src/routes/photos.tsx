@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { listPosts } from "@/lib/emp/api";
+import { postStills } from "@/lib/emp/house";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/photos")({
@@ -30,27 +31,27 @@ function PhotosPage() {
             <Skeleton key={key} className="aspect-still rounded-lg" />
           ))}
         </div>
-      ) : (photos.data ?? []).filter((post) => post.mediaUrl).length === 0 ? (
+      ) : (photos.data ?? []).filter((post) => postStills(post).length > 0).length === 0 ? (
         <p className="mt-10 rounded-xl bg-surface px-5 py-10 text-center text-muted shadow-[var(--shadow-border)]">
           No stills yet. When EMP Exclusive posts a photograph, it lives here.
         </p>
       ) : (
         <div className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-3">
-          {(photos.data ?? []).map((post) =>
-            post.mediaUrl ? (
+          {(photos.data ?? []).flatMap((post) =>
+            postStills(post).map((src) => (
               <Link
-                key={post.id}
+                key={`${post.id}-${src}`}
                 to="/post/$postId"
                 params={{ postId: String(post.id) }}
                 className="group overflow-hidden rounded-lg"
               >
                 <img
-                  src={post.mediaUrl}
+                  src={src}
                   alt={post.title || post.body.slice(0, 80)}
                   className="aspect-still w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.03]"
                 />
               </Link>
-            ) : null,
+            )),
           )}
         </div>
       )}

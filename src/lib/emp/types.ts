@@ -23,6 +23,7 @@ export type Post = {
   body: string;
   mediaUrl: string | null;
   mediaPoster: string | null;
+  gallery: string;
   isOfficial: boolean;
   createdAt: string;
   likeCount: number;

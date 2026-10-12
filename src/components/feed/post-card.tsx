@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { addComment, guestProfile, listComments, setGuestHandle, toggleReaction } from "@/lib/emp/api";
 import { localGuestId } from "@/lib/emp/guest";
 import type { Post, ReactionKind } from "@/lib/emp/types";
+import { postStills } from "@/lib/emp/house";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -34,12 +35,8 @@ export function PostCard({
     fire: post.fireCount,
   };
 
-  const split = Boolean(
-    post.mediaUrl &&
-      post.kind !== "video" &&
-      !post.mediaUrl.match(/\.(mp4|webm|ogg)(\?|$)/i) &&
-      !post.mediaUrl.startsWith("data:video"),
-  );
+  const stills = postStills(post);
+  const split = stills.length === 1 && post.kind !== "video";
 
   return (
     <article className="overflow-hidden rounded-xl bg-surface shadow-[var(--shadow-border)]">
@@ -69,8 +66,17 @@ export function PostCard({
           ) : null}
           <p className="whitespace-pre-wrap text-pretty text-fg/90">{post.body}</p>
         </div>
-        {post.mediaUrl ? <PostMedia post={post} split={split} /> : null}
+        {post.mediaUrl && stills.length <= 1 ? <PostMedia post={post} split={split} /> : null}
       </div>
+      {stills.length > 1 ? (
+        <div className="grid grid-cols-3 gap-1 px-4 pb-4 sm:px-5">
+          {stills.map((src) => (
+            <Link key={src} to="/post/$postId" params={{ postId: String(post.id) }} className="block">
+              <img src={src} alt="" className="aspect-still w-full bg-bg object-cover" />
+            </Link>
+          ))}
+        </div>
+      ) : null}
 
       <div className="flex flex-wrap items-center gap-1 border-t border-line px-2 py-1">
         {REACTIONS.map((item) => {

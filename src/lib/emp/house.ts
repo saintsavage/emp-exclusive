@@ -20,6 +20,14 @@ export function isLiveStory(createdAt: string) {
   return Date.now() - stamp < HOUSE.storyLifeMs;
 }
 
+export function postStills(post: { mediaUrl: string | null; gallery?: string | null }) {
+  const extra = (post.gallery ?? "")
+    .split("\n")
+    .map((item) => item.trim())
+    .filter(Boolean);
+  return [post.mediaUrl, ...extra].filter((item): item is string => Boolean(item));
+}
+
 export function memberInitials(name: string) {
   const parts = name.split(/[\s.\-]+/).filter(Boolean);
   if (parts.length === 1) return parts[0].slice(0, 3).toUpperCase();
