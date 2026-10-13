@@ -20,6 +20,13 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
 
   useEffect(() => {
+    if (!("serviceWorker" in navigator)) return;
+    void navigator.serviceWorker.register("/sw.js").catch(() => {
+      /* install still works from the home-screen menu if the worker is blocked */
+    });
+  }, []);
+
+  useEffect(() => {
     void pingVisit({ data: { guestId: localGuestId() } })
       .then((stats) => {
         queryClient.setQueryData(["stats"], stats);
@@ -40,10 +47,59 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           <p className="font-display text-lg text-fg">EMP Exclusive</p>
           <p>EMPIRE · Francistown · Est. 19 Dec 2024</p>
         </div>
+        <InstallHouse />
       </footer>
     </div>
   );
 }
+
+function InstallHouse() {
+  const [ready, setReady] = useState<BeforeInstallPromptEvent | null>(null);
+  const [hidden, setHidden] = useState(true);
+  const [ios, setIos] = useState(false);
+
+  useEffect(() => {
+    const standalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      ("standalone" in navigator && Boolean((navigator as Navigator & { standalone?: boolean }).standalone));
+    if (standalone) return;
+    setHidden(false);
+    setIos(/iphone|ipad|ipod/i.test(navigator.userAgent));
+    const onPrompt = (event: Event) => {
+      event.preventDefault();
+      setReady(event as BeforeInstallPromptEvent);
+    };
+    window.addEventListener("beforeinstallprompt", onPrompt);
+    return () => window.removeEventListener("beforeinstallprompt", onPrompt);
+  }, []);
+
+  if (hidden) return null;
+
+  return (
+    <div className="mx-auto max-w-6xl px-4 pb-8 text-sm text-muted">
+      {ready ? (
+        <button
+          type="button"
+          className="text-fg underline decoration-white/30 underline-offset-4"
+          onClick={() => {
+            void ready.prompt();
+            setReady(null);
+          }}
+        >
+          Install EMP on this phone
+        </button>
+      ) : ios ? (
+        <p>iPhone: in Safari, tap Share, then Add to Home Screen. It opens with the EMP mark, full screen.</p>
+      ) : (
+        <p>Android: browser menu, then Install app or Add to Home Screen. Same mark, full screen.</p>
+      )}
+    </div>
+  );
+}
+
+type BeforeInstallPromptEvent = Event & {
+  prompt: () => Promise<void>;
+};
 
 function Header() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });

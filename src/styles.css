@@ -645,3 +645,55 @@ html.director-on .director-card {
     opacity: 1;
   }
 }
+
+/* Full-picture viewer. dialog[open] sits in the browser top layer, so page
+   motion (transform/filter) cannot trap it inside the thumbnail. */
+.emp-zoom {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #f4f4f0;
+}
+
+.emp-zoom[open] {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  max-width: none;
+  max-height: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.emp-zoom::backdrop {
+  background: rgb(0 0 0 / 0.94);
+}
+
+.emp-zoom-img {
+  width: auto;
+  height: auto;
+  max-width: 96vw;
+  max-height: 92vh;
+  object-fit: contain;
+  background: #000;
+}
+
+.emp-zoom-close {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 2;
+  display: flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.16);
+  color: #fff;
+}
+

@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 export function ZoomImage({
   src,
@@ -11,21 +11,20 @@ export function ZoomImage({
   alt: string;
   className?: string;
 }) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (!open) return;
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
-    };
-    window.addEventListener("keydown", onKey);
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      document.body.style.overflow = previous;
-    };
-  }, [open]);
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    if (open && !dialog.open) dialog.showModal();
+    if (!open && dialog.open) dialog.close();
+  }, [open, mounted]);
 
   return (
     <>
@@ -37,30 +36,30 @@ export function ZoomImage({
       >
         <img src={src} alt={alt} className={className} />
       </button>
-      {open ? (
-        <div
-          className="fixed inset-0 z-[80] flex items-center justify-center bg-black/92 p-3 sm:p-8"
-          role="dialog"
-          aria-modal="true"
-          aria-label={alt || "Full image"}
-          onClick={() => setOpen(false)}
-        >
-          <button
-            type="button"
-            className="absolute top-4 right-4 flex size-11 items-center justify-center rounded-full bg-white/10 text-white"
-            aria-label="Close"
-            onClick={() => setOpen(false)}
-          >
-            <X className="size-5" />
-          </button>
-          <img
-            src={src}
-            alt={alt}
-            className={cn("max-h-[92vh] max-w-full object-contain")}
-            onClick={(event) => event.stopPropagation()}
-          />
-        </div>
-      ) : null}
+      {mounted
+        ? createPortal(
+            <dialog
+              ref={dialogRef}
+              className="emp-zoom"
+              aria-label={alt || "Full image"}
+              onClose={() => setOpen(false)}
+              onClick={(event) => {
+                if (event.target === event.currentTarget) setOpen(false);
+              }}
+            >
+              <button
+                type="button"
+                className="emp-zoom-close"
+                aria-label="Close"
+                onClick={() => setOpen(false)}
+              >
+                <X className="size-5" />
+              </button>
+              <img src={src} alt={alt} className="emp-zoom-img" />
+            </dialog>,
+            document.body,
+          )
+        : null}
     </>
   );
 }
