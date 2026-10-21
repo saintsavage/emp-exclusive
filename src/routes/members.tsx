@@ -25,6 +25,7 @@ const FACE_FOCUS: Record<string, string> = {
   basco: "object-center",
   waykid: "object-center",
   ahmed: "object-center",
+  empot: "object-center",
   tango: "object-center",
   lio: "object-center",
   wezzz: "object-center",
@@ -73,11 +74,10 @@ const SECTIONS: {
     theme: "wing",
   },
   {
-    title: "Designer",
-    ids: ["ahmed"],
+    title: "Designers",
+    ids: ["ahmed", "empot"],
     shared: false,
-    featured: true,
-    intro: "He draws the map before the house walks it.",
+    intro: "EMP LT draws the path. EMP OT cuts the sacred marks. Both sit with the designers.",
     theme: "designer",
     veil: false,
   },
@@ -155,7 +155,7 @@ function FamilyPage() {
         <p className="text-xs tracking-[0.28em] text-muted uppercase">The house</p>
         <h1 className="mt-2 font-display text-5xl tracking-tight text-balance">Meet the EMP Family</h1>
         <p className="mt-3 max-w-xl text-pretty text-muted">
-          Founders, director, co-founders, wings, designer, verse, and members. Stage names. One bond.
+          Founders, director, co-founders, wings, designers, verse, and members. Stage names. One bond.
         </p>
 
         {members.isPending ? (

@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { listPosts } from "@/lib/emp/api";
 import { postStills } from "@/lib/emp/house";
 import { ZoomImage } from "@/components/feed/lightbox";
+import { TrophyHall } from "@/components/trophies";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/photos")({
@@ -20,8 +21,15 @@ function PhotosPage() {
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10">
-      <p className="text-xs tracking-[0.28em] text-muted uppercase">Archive</p>
-      <h1 className="mt-2 font-display text-5xl tracking-tight">Stills</h1>
+      <p className="text-xs tracking-[0.28em] text-muted uppercase">Memorial</p>
+      <h1 className="mt-2 font-display text-5xl tracking-tight">Trophies</h1>
+      <p className="mt-3 max-w-xl text-pretty text-muted">
+        Top-tier pieces the house keeps under glass. They turn. Tap the base to read who made them, and why.
+      </p>
+      <TrophyHall />
+
+      <p className="mt-16 text-xs tracking-[0.28em] text-muted uppercase">Archive</p>
+      <h2 className="mt-2 font-display text-4xl tracking-tight">Stills</h2>
       <p className="mt-3 max-w-xl text-pretty text-muted">
         Every photograph EMP Exclusive posts, in the order it landed.
       </p>

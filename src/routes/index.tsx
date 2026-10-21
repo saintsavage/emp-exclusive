@@ -143,7 +143,7 @@ function Home() {
                     src={member.portraitUrl || null}
                     className={cn(
                       "size-12 shrink-0 rounded-full text-xs",
-                      ["saynt", "tumi", "mbeha", "mk7teen", "xanon", "jadoh", "ggee", "bridgett", "mj", "basco", "ahmed", "tango", "lio", "wezzz", "malone", "paul"].includes(
+                      ["saynt", "tumi", "mbeha", "mk7teen", "xanon", "jadoh", "ggee", "bridgett", "mj", "basco", "ahmed", "empot", "tango", "lio", "wezzz", "malone", "paul"].includes(
                         member.id,
                       )
                         ? "object-center"
