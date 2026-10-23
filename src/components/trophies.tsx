@@ -36,9 +36,9 @@ const TROPHIES: Trophy[] = [
     tone: "crimson",
     src: "/images/trophy-straata.png",
     lines: [
-      "Straata Academics was imagined and designed by Basco Mmula. He remains an EMP Wing. This piece is his, and the wing is still his post.",
-      "He saw a mark that could meet the streets that raised the house — the streets that turn survival into a standard. Low cars. High standards.",
-      "The crown sits over the metal because the street is not the bottom of the story. It is the school.",
+      "Straata Academics comes from how Basco Mmula sees the streets that raised them.",
+      "He wanted a mark that could stand with the people those streets turn into survivors. The car stays low because that is the ground they come from. The crown stays high because survival is not where it ends.",
+      "Low cars. High standards. In his eyes, the street is the school.",
     ],
   },
 ];
@@ -64,10 +64,7 @@ function TrophyCase({ trophy, onOpen }: { trophy: Trophy; onOpen: () => void }) 
     <figure className={`trophy trophy-${trophy.tone}`}>
       <div className="trophy-case">
         <div className="trophy-glass">
-          <div className="trophy-spin">
-            <img src={trophy.src} alt="" className="trophy-face trophy-front" />
-            <img src={trophy.src} alt="" className="trophy-face trophy-back" />
-          </div>
+          <img src={trophy.src} alt={trophy.title} className="trophy-face" />
         </div>
       </div>
       <figcaption className="trophy-plinth">
@@ -116,7 +113,7 @@ function TrophyArticle({ trophy, onClose }: { trophy: Trophy | null; onClose: ()
           <p className="text-xs tracking-[0.28em] text-white/60 uppercase">Memorial</p>
           <h2 className="mt-3 font-display text-5xl leading-none text-white">{trophy.title}</h2>
           <p className="mt-3 text-sm tracking-[0.18em] text-white/70 uppercase">
-            {trophy.designer} · {trophy.role}
+            Imagined by {trophy.designer}
           </p>
           <img src={trophy.src} alt="" className="trophy-article-mark" />
           <div className="mt-6 space-y-4 text-pretty text-white/85">

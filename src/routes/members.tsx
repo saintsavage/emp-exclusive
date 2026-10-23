@@ -77,7 +77,7 @@ const SECTIONS: {
     title: "Designers",
     ids: ["ahmed", "empot"],
     shared: false,
-    intro: "EMP LT draws the path. EMP OT cuts the sacred marks. Both sit with the designers.",
+    intro: "EMP LT draws the path.",
     theme: "designer",
     veil: false,
   },
@@ -202,7 +202,7 @@ function FamilyPage() {
                         <div className="p-5">
                           <p className="text-xs tracking-[0.22em] text-subtle uppercase">{member.role}</p>
                           <h2 className="mt-1 font-display text-3xl">{member.name}</h2>
-                          {section.shared ? null : (
+                          {section.shared || member.id === "empot" || !member.bio.trim() ? null : (
                             <p className="mt-3 text-pretty text-muted">{member.bio}</p>
                           )}
                         </div>

@@ -47,6 +47,10 @@ export const Route = createRootRoute({
       { title: APP_NAME },
       { name: "description", content: SHARE_BLURB },
       { name: "theme-color", content: "#0a0a0b" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black" },
+      { name: "apple-mobile-web-app-title", content: "EMP Exclusive" },
       { property: "og:site_name", content: APP_NAME },
       { property: "og:title", content: APP_NAME },
       { property: "og:description", content: SHARE_BLURB },
@@ -64,10 +68,13 @@ export const Route = createRootRoute({
       { name: "twitter:image", content: image },
     ],
     links: [
-      { rel: "icon", type: "image/png", href: "/images/avatar.png" },
-      { rel: "apple-touch-icon", href: "/images/avatar.png" },
-      { rel: "stylesheet", href: appCss },
-      { rel: "manifest", href: "/__grok/manifest.webmanifest" },
+      { rel: "icon", type: "image/png", href: "/icon-192.png" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      {
+        rel: "stylesheet",
+        href: appCss,
+      },
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap",
