@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from "re
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
-type Tone = "silver" | "crimson";
+type Tone = "violet" | "silver" | "crimson";
 type Phase = "button" | "charge" | "article" | "collapse" | "return";
 
 type Trophy = {
@@ -16,6 +16,19 @@ type Trophy = {
 };
 
 const TROPHIES: Trophy[] = [
+  {
+    id: "saynts",
+    title: "Saynts",
+    designer: "Planet Tumi",
+    role: "Director",
+    tone: "violet",
+    src: "/images/trophy-saynts.png",
+    lines: [
+      "Saynts was imagined by Planet Tumi, director of EMP Exclusive, with EMP Saynt beside her.",
+      "The word is the two of them. Not a side name. The pair the house already stands on, set in violet chrome because they are the brand itself.",
+      "VII · II · MMXXVI is cut into the line beneath it. SAYNTS is the director and the founder, held as one.",
+    ],
+  },
   {
     id: "exodist",
     title: "Exodist",
