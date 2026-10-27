@@ -1020,10 +1020,12 @@ html.director-on .director-card {
 
 .orb {
   position: absolute;
-  width: 9px;
-  height: 9px;
-  margin: -4.5px 0 0 -4.5px;
+  width: 11px;
+  height: 11px;
+  margin: -5.5px 0 0 -5.5px;
+  border: 1.5px solid transparent;
   border-radius: 999px;
+  background: transparent;
   offset-anchor: center;
   offset-path: inset(0 round var(--orb-round, 999px));
   offset-rotate: 0deg;
@@ -1034,54 +1036,44 @@ html.director-on .director-card {
 .orb::before {
   content: "";
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 22px;
-  height: 22px;
+  inset: -3px;
+  border: 1.5px solid transparent;
   border-radius: inherit;
-  transform: translate(-50%, -50%);
-  filter: blur(5px);
-}
-
-.orb-rig-article .orb::before,
-.orb-rig-collapse .orb::before,
-.orb-rig-charge .orb::before {
-  width: 210px;
-  height: 210px;
-  filter: blur(22px);
+  filter: blur(1.5px);
+  opacity: 0.85;
 }
 
 .orb-rig-violet .orb {
-  background: #f0a0ff;
+  border-color: #f2b4ff;
   box-shadow:
-    0 0 8px 2px #e056ff,
-    0 0 18px 4px rgb(210 40 255 / 0.85);
+    0 0 4px 1px #e056ff,
+    0 0 8px 1px rgb(210 40 255 / 0.65);
 }
 
 .orb-rig-violet .orb::before {
-  background: rgb(200 50 255 / 0.92);
+  border-color: #e056ff;
 }
 
 .orb-rig-silver .orb {
-  background: #fff;
+  border-color: #fff;
   box-shadow:
-    0 0 8px 2px #fff,
-    0 0 18px 4px rgb(255 255 255 / 0.8);
+    0 0 4px 1px #fff,
+    0 0 8px 1px rgb(255 255 255 / 0.6);
 }
 
 .orb-rig-silver .orb::before {
-  background: rgb(226 236 255 / 0.95);
+  border-color: #fff;
 }
 
 .orb-rig-crimson .orb {
-  background: #ff415c;
+  border-color: #ff8b9b;
   box-shadow:
-    0 0 8px 2px #ff2944,
-    0 0 18px 4px rgb(255 40 70 / 0.85);
+    0 0 4px 1px #ff2944,
+    0 0 8px 1px rgb(255 40 70 / 0.65);
 }
 
 .orb-rig-crimson .orb::before {
-  background: rgb(255 36 64 / 0.92);
+  border-color: #ff415c;
 }
 
 @keyframes orb-run {
