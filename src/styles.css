@@ -839,6 +839,42 @@ html.director-on .director-card {
   color: #f4f4f0;
 }
 
+.trophy.is-charge .trophy-face {
+  filter: brightness(1.45) drop-shadow(0 0 28px rgb(255 255 255 / 0.85));
+}
+
+.trophy-crimson.is-charge .trophy-face {
+  filter: brightness(1.35) drop-shadow(0 0 28px rgb(255 48 72 / 0.9));
+}
+
+.trophy.is-charge .trophy-tap {
+  animation: tap-flash 0.56s ease;
+}
+
+.trophy-silver.is-charge .trophy-tap {
+  box-shadow:
+    0 0 0 1px #fff,
+    0 0 22px rgb(255 255 255 / 0.85);
+}
+
+.trophy-crimson.is-charge .trophy-tap {
+  box-shadow:
+    0 0 0 1px #ff415c,
+    0 0 22px rgb(255 40 70 / 0.9);
+}
+
+@keyframes tap-flash {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(0.94);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 .trophy-crimson .trophy-plinth {
   box-shadow:
     inset 0 1px 0 rgb(255 80 96 / 0.35),
@@ -876,6 +912,7 @@ html.director-on .director-card {
 
 .trophy-article {
   position: relative;
+  z-index: 70;
   width: min(40rem, 100%);
   max-height: min(88vh, 52rem);
   overflow: auto;
@@ -883,6 +920,132 @@ html.director-on .director-card {
   background: #070707;
   color: #f4f4f0;
   padding: 1.6rem 1.4rem 1.8rem;
+}
+
+.trophy-article.is-in {
+  animation: trophy-arrive 0.72s cubic-bezier(0.16, 0.84, 0.2, 1) both;
+}
+
+.trophy-article.is-collapse {
+  transform: scale(0);
+  opacity: 0;
+  transition:
+    transform 0.62s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.5s ease;
+}
+
+.trophy-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgb(0 0 0 / 0.58);
+  backdrop-filter: blur(18px);
+}
+
+.trophy-veil.is-return {
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+
+.trophy-veil-hit {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: transparent;
+}
+
+.orb-rig {
+  position: fixed;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.orb-rig-live {
+  z-index: 80;
+}
+
+.orb-rig[data-animate="1"] {
+  transition:
+    left 0.62s cubic-bezier(0.2, 0.8, 0.2, 1),
+    top 0.62s cubic-bezier(0.2, 0.8, 0.2, 1),
+    width 0.62s cubic-bezier(0.2, 0.8, 0.2, 1),
+    height 0.62s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.orb {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+  border-radius: 999px;
+  offset-anchor: center;
+  offset-path: inset(0 round var(--orb-round, 999px));
+  offset-rotate: 0deg;
+  animation: orb-run 6.6s linear infinite;
+  animation-delay: calc(var(--i) * -2.2s);
+}
+
+.orb::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 22px;
+  height: 22px;
+  border-radius: inherit;
+  transform: translate(-50%, -50%);
+  filter: blur(5px);
+}
+
+.orb-rig-article .orb::before,
+.orb-rig-collapse .orb::before,
+.orb-rig-charge .orb::before {
+  width: 210px;
+  height: 210px;
+  filter: blur(22px);
+}
+
+.orb-rig-silver .orb {
+  background: #fff;
+  box-shadow:
+    0 0 8px 2px #fff,
+    0 0 18px 4px rgb(255 255 255 / 0.8);
+}
+
+.orb-rig-silver .orb::before {
+  background: rgb(226 236 255 / 0.95);
+}
+
+.orb-rig-crimson .orb {
+  background: #ff415c;
+  box-shadow:
+    0 0 8px 2px #ff2944,
+    0 0 18px 4px rgb(255 40 70 / 0.85);
+}
+
+.orb-rig-crimson .orb::before {
+  background: rgb(255 36 64 / 0.92);
+}
+
+@keyframes orb-run {
+  to {
+    offset-distance: 100%;
+  }
+}
+
+@keyframes trophy-arrive {
+  from {
+    transform: scale(0.84);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
 }
 
 .trophy-read-silver .trophy-article {
@@ -943,7 +1106,10 @@ html.director-on .director-card {
 
 @media (prefers-reduced-motion: reduce) {
   .trophy-glass::before,
-  .trophy-glass::after {
+  .trophy-glass::after,
+  .orb,
+  .trophy-article.is-in,
+  .trophy.is-charge .trophy-tap {
     animation: none !important;
   }
 }
