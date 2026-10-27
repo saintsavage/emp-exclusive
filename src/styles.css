@@ -953,9 +953,10 @@ html.director-on .director-card {
 
 .trophy-article {
   position: relative;
-  z-index: 70;
-  width: min(40rem, 100%);
-  max-height: min(88vh, 52rem);
+  z-index: 1;
+  width: min(40rem, calc(100vw - 2rem));
+  max-height: min(86vh, 52rem);
+  margin: auto;
   overflow: auto;
   border-radius: 1.25rem;
   background: #070707;
@@ -978,7 +979,7 @@ html.director-on .director-card {
 .trophy-veil {
   position: fixed;
   inset: 0;
-  z-index: 60;
+  z-index: 70;
   display: flex;
   align-items: center;
   justify-content: center;

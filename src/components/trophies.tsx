@@ -293,7 +293,7 @@ function TrophyArticle({
 
   const leaving = phase === "collapse" || phase === "return";
 
-  return (
+  return createPortal(
     <div className={`trophy-veil trophy-veil-${trophy.tone} ${phase === "return" ? "is-return" : ""}`}>
       <button type="button" className="trophy-veil-hit" aria-label="Close" onClick={onClose} />
       <article
@@ -314,6 +314,7 @@ function TrophyArticle({
           ))}
         </div>
       </article>
-    </div>
+    </div>,
+    document.body,
   );
 }
