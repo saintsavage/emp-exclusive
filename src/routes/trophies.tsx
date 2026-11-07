@@ -11,6 +11,8 @@ const applicationSchema = z.object({
   otherIndustry: z.string().max(120),
   audience: z.string().trim().min(5).max(1500),
   difference: z.string().max(1500),
+  ambition: z.string().max(1500),
+  timeline: z.string().max(100),
   personality: z.array(z.string().max(100)).max(12),
   otherPersonality: z.string().max(120),
   colours: z.array(z.string().max(80)).max(12),
@@ -55,6 +57,8 @@ const sendBrandApplication = createServerFn({ method: "POST" })
       `Industry: ${data.industry}${data.otherIndustry ? ` / ${data.otherIndustry}` : ""}`,
       `Target audience: ${data.audience}`,
       `What makes it different: ${data.difference || "Not provided"}`,
+      `Long-term ambition: ${data.ambition || "Not provided"}`,
+      `Preferred timeline: ${data.timeline || "Not specified"}`,
       `Personality: ${data.personality.join(", ") || "Not provided"}${data.otherPersonality ? ` / ${data.otherPersonality}` : ""}`,
       `Colours: ${data.colours.join(", ") || "Not provided"}${data.customColours ? ` / ${data.customColours}` : ""}`,
       "",
@@ -109,7 +113,7 @@ const stages = [
 ];
 
 const deliverableGroups = [
-  { title: "Brand identity", options: ["Logo design", "Complete brand identity", "Brand guidelines", "Slogan / tagline", "Typography and colour system"] },
+  { title: "Brand identity", options: ["Brand name development", "Logo design", "Complete brand identity", "Full brand package", "Brand guidelines", "Slogan / tagline", "Typography and colour system"] },
   { title: "Business stationery", options: ["Business cards", "Letterheads", "Email signatures", "Invoices and quotation templates", "Company profiles"] },
   { title: "Marketing materials", options: ["Flyers", "Posters", "Brochures", "Banners", "Digital advertisements", "Presentation designs"] },
   { title: "Digital presence", options: ["Social media profile branding", "Social media post templates", "Website design", "Landing page", "App interface design"] },
@@ -126,6 +130,8 @@ const baseSteps: Step[] = [
   { id: "industry", title: "Which space does it belong to?", kind: "single", required: true, options: ["Fashion", "Technology", "Entertainment", "Beauty", "Lifestyle", "Business", "Art and design", "Food", "Sport", "Other"] },
   { id: "audience", title: "Who do you want to reach?", hint: "Think about the people who would connect with your brand.", kind: "textarea", required: true },
   { id: "difference", title: "What makes it different?", kind: "textarea" },
+  { id: "ambition", title: "What do you want this brand to become?", hint: "Think beyond launch day. What is the bigger vision?", kind: "textarea" },
+  { id: "timeline", title: "When would you like to get started?", kind: "single", options: ["As soon as possible", "Within a month", "Flexible / no fixed deadline", "Not sure yet"] },
   { id: "personality", title: "What should the brand feel like?", hint: "Choose as many as you like.", kind: "multi", options: ["Luxury", "Streetwear", "Minimalist", "Futuristic", "Corporate", "Creative", "Sporty", "Elegant", "Playful", "Bold", "Other"] },
   { id: "colours", title: "Which colours fit your vision?", hint: "Choose a palette or describe your own.", kind: "multi", options: ["Black and white", "Red and black", "Blue and silver", "Earth tones", "Pastels", "Monochrome", "Bright colours", "Other"] },
   { id: "deliverables", title: "What do you want us to create?", hint: "Select every end product you need. You can choose across different categories.", kind: "deliverables", required: true },
@@ -143,7 +149,7 @@ const contactSteps: Step[] = [
 
 const initialAnswers: Record<string, string | string[]> = {
   brandName: "", purpose: "", inspiration: "", industry: "", otherIndustry: "",
-  audience: "", difference: "", personality: [], otherPersonality: "",
+  audience: "", difference: "", ambition: "", timeline: "", personality: [], otherPersonality: "",
   colours: [], customColours: "", deliverables: [], otherDeliverable: "",
   delivery: [], businessCardDetails: "", socialPlatforms: "", packagingDetails: "",
   extra: "", fullName: "", phone: "", email: "", empId: "",
@@ -212,6 +218,8 @@ function BrandBranchPage() {
         otherIndustry: String(answers.otherIndustry || ""),
         audience: String(answers.audience || ""),
         difference: String(answers.difference || ""),
+        ambition: String(answers.ambition || ""),
+        timeline: String(answers.timeline || ""),
         personality: (answers.personality as string[]) || [],
         otherPersonality: String(answers.otherPersonality || ""),
         colours: (answers.colours as string[]) || [],
@@ -338,7 +346,7 @@ function BrandBranchPage() {
               <h3 className="mt-4 font-display text-4xl sm:text-5xl">Your application.</h3>
               <p className="mt-3 text-sm leading-6 text-white/50">Review your answers. You can go back and change anything before submitting.</p>
               <div className="mt-7 space-y-5">{[
-                ["Brand concept", ["brandName", "purpose", "inspiration", "industry", "audience", "difference"]],
+                ["Brand concept", ["brandName", "purpose", "inspiration", "industry", "audience", "difference", "ambition", "timeline"]],
                 ["Personality and visual direction", ["personality", "otherPersonality", "colours", "customColours"]],
                 ["End products / deliverables", ["deliverables", "otherDeliverable", "delivery", "businessCardDetails", "socialPlatforms", "packagingDetails"]],
                 ["Additional information", ["extra"]],
