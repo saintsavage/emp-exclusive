@@ -1,38 +1,254 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
 
-function BrandBranchMark({ compact = false }: { compact?: boolean }) {
-  return (
-    <div className={compact ? "flex items-center gap-3" : "flex flex-col items-start gap-5"}>
-      <svg viewBox="0 0 240 170" role="img" aria-label="Brand Branch BB logo" className={compact ? "h-14 w-20" : "h-28 w-40 sm:h-36 sm:w-52"}>
-        <defs>
-          <linearGradient id="bb-accent" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#f06b6b" />
-            <stop offset="100%" stopColor="#b91f2b" />
-          </linearGradient>
-        </defs>
-        <path d="M34 140V30h54c29 0 43 14 43 35 0 15-8 25-21 30 18 4 29 16 29 34 0 26-19 41-49 41H34Z" fill="none" stroke="white" strokeWidth="13" strokeLinejoin="round" transform="translate(0 -12) scale(.88 1)" />
-        <path d="M115 140V30h50c29 0 44 14 44 35 0 15-8 25-22 30 18 4 30 16 30 34 0 26-20 41-50 41h-52" fill="none" stroke="url(#bb-accent)" strokeWidth="13" strokeLinejoin="round" transform="translate(-3 -12) scale(.88 1)" />
-        <path d="M120 12v25m0-8L99 9m21 20 22-20M120 37 96 55m24-18 25 18" fill="none" stroke="url(#bb-accent)" strokeWidth="5" strokeLinecap="round" />
-        <circle cx="120" cy="10" r="5" fill="white" />
-      </svg>
-      <div>
-        <p className="font-display text-4xl font-semibold uppercase leading-[0.82] tracking-[0.08em] sm:text-6xl">Brand<span className="text-[#e34242]">.</span><br />Branch<span className="text-[#e34242]">.</span></p>
-        <p className="mt-3 text-[9px] font-bold uppercase tracking-[0.34em] text-white/45 sm:text-[10px]">Ideas grow here · BB</p>
-      </div>
-    </div>
-  );
-}
+const applicationSchema = z.object({
+  brandName: z.string().trim().min(2).max(100),
+  purpose: z.string().trim().min(10).max(2500),
+  inspiration: z.string().max(2500),
+  industry: z.string().min(1).max(100),
+  otherIndustry: z.string().max(120),
+  audience: z.string().trim().min(5).max(1500),
+  difference: z.string().max(1500),
+  personality: z.array(z.string().max(100)).max(12),
+  otherPersonality: z.string().max(120),
+  colours: z.array(z.string().max(80)).max(12),
+  customColours: z.string().max(300),
+  deliverables: z.array(z.string().max(120)).min(1).max(40),
+  otherDeliverable: z.string().max(250),
+  delivery: z.array(z.string().max(120)).max(8),
+  businessCardDetails: z.string().max(1200),
+  socialPlatforms: z.string().max(600),
+  packagingDetails: z.string().max(1200),
+  extra: z.string().max(3000),
+  fullName: z.string().trim().min(2).max(100),
+  phone: z.string().trim().min(6).max(40),
+  email: z.string().trim().email().max(254),
+  empId: z.string().max(80),
+  website: z.string().max(0).optional(),
+  attachments: z.array(z.object({
+    filename: z.string().max(120),
+    content: z.string().max(3000000),
+    contentType: z.enum(["image/png", "image/jpeg", "application/pdf"]),
+  })).max(3),
+});
 
-export const Route = createFileRoute("/Brand Branch")({ component: BrandBranchesPage });
+const sendBrandApplication = createServerFn({ method: "POST" })
+  .inputValidator(applicationSchema)
+  .handler(async ({ data }) => {
+    if (data.website) throw new Error("Application could not be submitted.");
+    const apiKey = process.env.RESEND_API_KEY;
+    const fromEmail = process.env.CONTACT_FROM_EMAIL;
+    if (!apiKey || !fromEmail) {
+      throw new Error("Applications are not accepting email submissions yet. Please contact EMP on WhatsApp while delivery is being configured.");
+    }
+    const attachmentBytes = data.attachments.reduce((sum, item) => sum + item.content.length, 0);
+    if (attachmentBytes > 6000000) throw new Error("Please reduce the total attachment size and try again.");
+
+    const lines = [
+      "NEW BRAND BRANCH APPLICATION",
+      "",
+      `Brand name: ${data.brandName}`,
+      `What it represents: ${data.purpose}`,
+      `Inspiration: ${data.inspiration || "Not provided"}`,
+      `Industry: ${data.industry}${data.otherIndustry ? ` / ${data.otherIndustry}` : ""}`,
+      `Target audience: ${data.audience}`,
+      `What makes it different: ${data.difference || "Not provided"}`,
+      `Personality: ${data.personality.join(", ") || "Not provided"}${data.otherPersonality ? ` / ${data.otherPersonality}` : ""}`,
+      `Colours: ${data.colours.join(", ") || "Not provided"}${data.customColours ? ` / ${data.customColours}` : ""}`,
+      "",
+      "END PRODUCTS / DELIVERABLES",
+      ...data.deliverables.map((item) => `- ${item}`),
+      data.otherDeliverable ? `Other: ${data.otherDeliverable}` : "",
+      `Delivery preference: ${data.delivery.join(", ") || "Would like a recommendation"}`,
+      `Business card details: ${data.businessCardDetails || "Not applicable"}`,
+      `Social platforms: ${data.socialPlatforms || "Not applicable"}`,
+      `Packaging details: ${data.packagingDetails || "Not applicable"}`,
+      "",
+      `Additional information: ${data.extra || "Not provided"}`,
+      `EMP ID username: ${data.empId || "Not provided"}`,
+      "",
+      "CONTACT DETAILS",
+      `Full name: ${data.fullName}`,
+      `Phone: ${data.phone}`,
+      `Email: ${data.email}`,
+      "",
+      `Attachments: ${data.attachments.map((item) => item.filename).join(", ") || "None"}`,
+      "",
+      "This application is subject to review. Design and physical production are assessed separately.",
+    ].filter(Boolean);
+
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from: `EMP Exclusive Website <${fromEmail}>`,
+        to: ["empexclusive.planet@gmail.com"],
+        reply_to: data.email,
+        subject: `Brand Branch application · ${data.brandName}`,
+        text: lines.join("\n"),
+        attachments: data.attachments.map((item) => ({
+          filename: item.filename,
+          content: item.content,
+          content_type: item.contentType,
+        })),
+      }),
+    });
+    if (!response.ok) throw new Error("Your application could not be delivered. Please try WhatsApp instead.");
+    return { sent: true };
+  });
+
+export const Route = createFileRoute("/trophies")({ component: BrandBranchPage });
 
 const stages = [
-  { n: "01", title: "Find your thing", text: "Start with what you care about: fashion, art, music, gaming, sport, tech or an idea nobody around you has tried yet." },
-  { n: "02", title: "Build the identity", text: "Shape a name, a look, a voice and a reason for people to connect with your brand." },
-  { n: "03", title: "Make it tangible", text: "Turn the concept into designs, content, products or a community people can actually experience." },
-  { n: "04", title: "Put it out there", text: "Prepare a launch, learn from the response and keep improving with the right support around you." },
+  ["01", "Find your thing", "Start with what you care about: fashion, art, music, gaming, sport, tech or an idea nobody around you has tried yet."],
+  ["02", "Build the identity", "Shape a name, a look, a voice and a reason for people to connect with your brand."],
+  ["03", "Make it tangible", "Turn the concept into designs, content, products or a community people can actually experience."],
+  ["04", "Put it out there", "Prepare a launch, learn from the response and keep improving with the right support around you."],
 ];
 
-function BrandBranchesPage() {
+const deliverableGroups = [
+  { title: "Brand identity", options: ["Logo design", "Complete brand identity", "Brand guidelines", "Slogan / tagline", "Typography and colour system"] },
+  { title: "Business stationery", options: ["Business cards", "Letterheads", "Email signatures", "Invoices and quotation templates", "Company profiles"] },
+  { title: "Marketing materials", options: ["Flyers", "Posters", "Brochures", "Banners", "Digital advertisements", "Presentation designs"] },
+  { title: "Digital presence", options: ["Social media profile branding", "Social media post templates", "Website design", "Landing page", "App interface design"] },
+  { title: "Products and merchandise", options: ["T-shirt and clothing designs", "Caps and hoodies", "Mugs and promotional items", "Stickers and labels", "Product packaging"] },
+  { title: "Physical branding", options: ["Shop signage", "Vehicle branding", "Uniforms", "Event displays", "Display stands"] },
+];
+
+type Step = { id: string; title: string; hint?: string; kind: "text" | "textarea" | "single" | "multi" | "deliverables" | "files"; required?: boolean; options?: string[] };
+
+const baseSteps: Step[] = [
+  { id: "brandName", title: "What is your brand called?", hint: "A working name is fine. We can help refine it.", kind: "text", required: true },
+  { id: "purpose", title: "What does your brand represent?", hint: "Tell us the idea, purpose or story behind it.", kind: "textarea", required: true },
+  { id: "inspiration", title: "What inspired the idea?", kind: "textarea" },
+  { id: "industry", title: "Which space does it belong to?", kind: "single", required: true, options: ["Fashion", "Technology", "Entertainment", "Beauty", "Lifestyle", "Business", "Art and design", "Food", "Sport", "Other"] },
+  { id: "audience", title: "Who do you want to reach?", hint: "Think about the people who would connect with your brand.", kind: "textarea", required: true },
+  { id: "difference", title: "What makes it different?", kind: "textarea" },
+  { id: "personality", title: "What should the brand feel like?", hint: "Choose as many as you like.", kind: "multi", options: ["Luxury", "Streetwear", "Minimalist", "Futuristic", "Corporate", "Creative", "Sporty", "Elegant", "Playful", "Bold", "Other"] },
+  { id: "colours", title: "Which colours fit your vision?", hint: "Choose a palette or describe your own.", kind: "multi", options: ["Black and white", "Red and black", "Blue and silver", "Earth tones", "Pastels", "Monochrome", "Bright colours", "Other"] },
+  { id: "deliverables", title: "What do you want us to create?", hint: "Select every end product you need. You can choose across different categories.", kind: "deliverables", required: true },
+];
+
+const contactSteps: Step[] = [
+  { id: "extra", title: "Anything else we should know?", hint: "Add requirements, references, existing materials, inspiration or your preferred timeline.", kind: "textarea" },
+  { id: "files", title: "Have anything you can show us?", hint: "Optional: upload up to 3 reference images or PDFs (2 MB each).", kind: "files" },
+  { id: "fullName", title: "What's your full name?", kind: "text", required: true },
+  { id: "phone", title: "What's the best phone number to reach you on?", hint: "Required. Include your country code.", kind: "text", required: true },
+  { id: "email", title: "What's your email address?", kind: "text", required: true },
+  { id: "empId", title: "EMP ID username (if you have one)", hint: "Optional. EMP ID is being developed as a shared ecosystem identity.", kind: "text" },
+];
+
+const initialAnswers: Record<string, string | string[]> = {
+  brandName: "", purpose: "", inspiration: "", industry: "", otherIndustry: "",
+  audience: "", difference: "", personality: [], otherPersonality: "",
+  colours: [], customColours: "", deliverables: [], otherDeliverable: "",
+  delivery: [], businessCardDetails: "", socialPlatforms: "", packagingDetails: "",
+  extra: "", fullName: "", phone: "", email: "", empId: "",
+};
+
+function BrandBranchPage() {
+  const [answers, setAnswers] = useState<Record<string, string | string[]>>(initialAnswers);
+  const [attachments, setAttachments] = useState<{ filename: string; content: string; contentType: "image/png" | "image/jpeg" | "application/pdf" }[]>([]);
+  const [fileError, setFileError] = useState("");
+  const [stepIndex, setStepIndex] = useState(0);
+  const [review, setReview] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const selected = (answers.deliverables as string[]) || [];
+  const steps = useMemo(() => {
+    const conditional: Step[] = [];
+    if (selected.includes("Business cards")) conditional.push({ id: "businessCardDetails", title: "A few details about the business cards", hint: "How many people need cards? Single or double-sided? Design only, or design and printing?", kind: "textarea" });
+    if (selected.includes("Social media profile branding") || selected.includes("Social media post templates")) conditional.push({ id: "socialPlatforms", title: "Which social platforms do you use?", hint: "For example Instagram, TikTok, Facebook or X.", kind: "text" });
+    if (selected.includes("Product packaging")) conditional.push({ id: "packagingDetails", title: "Tell us about the packaging", hint: "What product is it for? What format, size or material do you have in mind?", kind: "textarea" });
+    return [...baseSteps, ...conditional, ...contactSteps];
+  }, [selected.join("|")]);
+  const current = steps[Math.min(stepIndex, steps.length - 1)];
+  const progress = review ? 100 : Math.round(((stepIndex + 1) / steps.length) * 100);
+  const update = (id: string, value: string | string[]) => setAnswers((previous) => ({ ...previous, [id]: value }));
+  const value = answers[current.id] ?? "";
+  const isFilled = Array.isArray(value) ? value.length > 0 : String(value).trim().length > 0;
+  const canContinue = !current.required || isFilled;
+
+  const toggle = (id: string, option: string) => {
+    const existing = (answers[id] as string[]) || [];
+    update(id, existing.includes(option) ? existing.filter((item) => item !== option) : [...existing, option]);
+  };
+
+  const handleFiles = async (list: FileList | null) => {
+    setFileError("");
+    if (!list) return;
+    const allowed = ["image/png", "image/jpeg", "application/pdf"];
+    const next = [...attachments];
+    for (const file of Array.from(list)) {
+      if (next.length >= 3) { setFileError("You can attach up to 3 files."); break; }
+      if (!allowed.includes(file.type)) { setFileError("Only PNG, JPG and PDF files are supported."); continue; }
+      if (file.size > 2 * 1024 * 1024) { setFileError("Each file must be 2 MB or smaller."); continue; }
+      if (next.reduce((sum, item) => sum + item.content.length, 0) + file.size * 1.4 > 6000000) { setFileError("Your attachments are too large. Please choose smaller files."); break; }
+      const content = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result).split(",")[1] || "");
+        reader.onerror = () => reject(new Error("A file could not be read."));
+        reader.readAsDataURL(file);
+      });
+      next.push({ filename: file.name, content, contentType: file.type as "image/png" | "image/jpeg" | "application/pdf" });
+    }
+    setAttachments(next);
+  };
+
+  const submit = async () => {
+    setSending(true);
+    setSubmitError("");
+    try {
+      await sendBrandApplication({ data: {
+        brandName: String(answers.brandName || ""),
+        purpose: String(answers.purpose || ""),
+        inspiration: String(answers.inspiration || ""),
+        industry: String(answers.industry || ""),
+        otherIndustry: String(answers.otherIndustry || ""),
+        audience: String(answers.audience || ""),
+        difference: String(answers.difference || ""),
+        personality: (answers.personality as string[]) || [],
+        otherPersonality: String(answers.otherPersonality || ""),
+        colours: (answers.colours as string[]) || [],
+        customColours: String(answers.customColours || ""),
+        deliverables: selected,
+        otherDeliverable: String(answers.otherDeliverable || ""),
+        delivery: (answers.delivery as string[]) || [],
+        businessCardDetails: String(answers.businessCardDetails || ""),
+        socialPlatforms: String(answers.socialPlatforms || ""),
+        packagingDetails: String(answers.packagingDetails || ""),
+        extra: String(answers.extra || ""),
+        fullName: String(answers.fullName || ""),
+        phone: String(answers.phone || ""),
+        email: String(answers.email || ""),
+        empId: String(answers.empId || ""),
+        website: "",
+        attachments,
+      } });
+      setSubmitted(true);
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "We couldn't submit your application. Please try again.");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  if (submitted) return (
+    <main className="min-h-[75vh] bg-[#09090b] px-4 py-24 text-white">
+      <div className="mx-auto max-w-2xl border border-white/15 p-8 text-center sm:p-14">
+        <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#e66a6a]">Brand Branch · Application received</p>
+        <h1 className="mt-5 font-display text-5xl sm:text-7xl">Your idea is in.</h1>
+        <p className="mt-5 text-sm leading-7 text-white/65">Your application was delivered to EMP Exclusive. Our team will review the details and contact you using the phone number you provided.</p>
+        <p className="mt-4 text-xs leading-6 text-white/40">Submission does not guarantee acceptance or physical production. We'll confirm the scope and next steps with you.</p>
+        <a href="/" className="mt-8 inline-flex min-h-12 items-center bg-white px-6 text-sm font-bold text-black">Return to EMP Exclusive ↗</a>
+      </div>
+    </main>
+  );
+
   return (
     <main className="bg-bg">
       <section className="relative isolate overflow-hidden bg-[#09090b] px-4 pb-20 pt-24 text-white sm:pb-28 sm:pt-32">
@@ -40,13 +256,13 @@ function BrandBranchesPage() {
         <div className="absolute -right-12 top-20 size-56 rounded-full border border-[#e34242]/45 sm:size-[26rem]" />
         <div className="absolute bottom-0 left-0 h-1 w-2/3 bg-gradient-to-r from-[#e34242] via-white/50 to-transparent" />
         <div className="relative mx-auto max-w-6xl">
-          <div className="flex flex-col gap-10 sm:flex-row sm:items-center sm:justify-between"><BrandBranchMark /><p className="max-w-xs text-[10px] font-bold uppercase tracking-[0.3em] text-white/50"><span className="mb-3 block h-px w-8 bg-[#e34242]" /> EMP Exclusive · The youth brand house</p></div>
+          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/50">EMP Exclusive · The youth brand house</p>
           <p className="mt-12 text-xs font-bold uppercase tracking-[0.28em] text-[#e66a6a]">For the next generation of founders</p>
           <h1 className="mt-4 max-w-4xl font-display text-6xl leading-[0.88] tracking-tight sm:text-8xl md:text-9xl">Don't just wear<br /><span className="text-white/40">a brand.</span><br />Build one.</h1>
-          <p className="mt-8 max-w-2xl text-base leading-8 text-white/65 sm:text-lg">Brand Branch is a creative launchpad for ambitious young people with ideas of their own. Bring your style, your interests and your big plans. We'll make room for them to grow into real brands.</p>
+          <p className="mt-8 max-w-2xl text-base leading-8 text-white/65 sm:text-lg">Brand Branch is a creative launchpad for ambitious people with ideas of their own. Bring your style, your interests and your big plans. We'll help shape the direction and the identity.</p>
           <div className="mt-10 flex flex-wrap gap-3">
-            <a href="#brand-lab" className="inline-flex min-h-12 items-center bg-white px-6 text-sm font-bold text-black transition hover:bg-[#e34242] hover:text-white">Explore the brand lab <span className="ml-4">↘</span></a>
-            <Link to="/#involved" className="inline-flex min-h-12 items-center border border-white/35 px-6 text-sm font-semibold text-white transition hover:bg-white/10">Get involved</Link>
+            <a href="#application" className="inline-flex min-h-12 items-center bg-white px-6 text-sm font-bold text-black transition hover:bg-[#e34242] hover:text-white">JOIN BRAND BRANCH <span className="ml-4">↘</span></a>
+            <a href="#brand-lab" className="inline-flex min-h-12 items-center border border-white/35 px-6 text-sm font-semibold text-white transition hover:bg-white/10">Explore the brand lab</a>
           </div>
           <div className="mt-16 grid max-w-2xl grid-cols-3 gap-4 border-t border-white/20 pt-5 text-[9px] font-bold uppercase tracking-[0.2em] text-white/45 sm:text-[10px]"><span>Ideas welcome</span><span>Culture first</span><span>Built together</span></div>
         </div>
@@ -56,7 +272,7 @@ function BrandBranchesPage() {
         <div className="mx-auto max-w-6xl">
           <div className="grid gap-10 md:grid-cols-[0.85fr_1.15fr] md:items-end">
             <div><p className="text-xs font-bold uppercase tracking-[0.28em] text-muted">01 / The brand lab</p><h2 className="mt-4 max-w-lg font-display text-4xl leading-[1.02] tracking-tight sm:text-6xl">Your ambition.<br />Your own identity.</h2></div>
-            <p className="max-w-2xl text-base leading-8 text-muted">Not everybody wants to be an influencer. Some want to design clothes, start a label, build a creative crew, launch a product or turn a personal obsession into a business. This is a place to explore those possibilities without needing to have everything figured out on day one.</p>
+            <p className="max-w-2xl text-base leading-8 text-muted">Not everybody wants to be an influencer. Some want to design clothes, start a label, build a creative crew, launch a product or turn a personal obsession into a business. This is a place to explore those possibilities without needing everything figured out on day one.</p>
           </div>
           <div className="mt-14 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {[
@@ -74,36 +290,71 @@ function BrandBranchesPage() {
           <p className="text-xs font-bold uppercase tracking-[0.28em] text-white/45">02 / From idea to identity</p>
           <div className="mt-4 grid gap-10 md:grid-cols-[0.8fr_1.2fr]">
             <h2 className="font-display text-4xl leading-[1.02] tracking-tight sm:text-6xl">Every big brand<br />started somewhere.</h2>
-            <div className="grid gap-0 sm:grid-cols-2">
-              {stages.map((stage) => <article key={stage.n} className="border-t border-white/15 py-6 sm:px-6 sm:first:pl-0"><p className="text-xs font-bold tracking-[0.2em] text-[#e66a6a]">{stage.n}</p><h3 className="mt-4 font-display text-2xl">{stage.title}</h3><p className="mt-3 text-sm leading-7 text-white/55">{stage.text}</p></article>)}
-            </div>
+            <div className="grid gap-0 sm:grid-cols-2">{stages.map(([n, title, body]) => <article key={n} className="border-t border-white/15 py-6 sm:px-6 sm:first:pl-0"><p className="text-xs font-bold tracking-[0.2em] text-[#e66a6a]">{n}</p><h3 className="mt-4 font-display text-2xl">{title}</h3><p className="mt-3 text-sm leading-7 text-white/55">{body}</p></article>)}</div>
           </div>
         </div>
       </section>
 
-      <section className="px-4 py-20 sm:py-28">
-        <div className="mx-auto max-w-6xl">
-          <div className="grid gap-8 md:grid-cols-[1fr_0.8fr] md:items-end">
-            <div><p className="text-xs font-bold uppercase tracking-[0.28em] text-muted">03 / More than a logo</p><h2 className="mt-4 max-w-2xl font-display text-4xl leading-[1.02] tracking-tight sm:text-6xl">Make something people can connect with.</h2></div>
-            <p className="text-base leading-8 text-muted">A brand is more than a name printed on a hoodie. It's a point of view, a community and a promise. Brand Branch is here to help young creators think beyond the first design and build something with direction.</p>
+      <section id="application" className="scroll-mt-20 bg-[#09090b] px-4 py-20 text-white sm:py-28">
+        <div className="mx-auto max-w-4xl">
+          <div className="mb-10">
+            <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#e66a6a]">03 / Join Brand Branch</p>
+            <h2 className="mt-4 font-display text-4xl leading-tight sm:text-6xl">Let's build your idea.</h2>
+            <p className="mt-4 max-w-2xl text-sm leading-7 text-white/55">A few short cards, one question at a time. Take your time and give us the details that matter.</p>
           </div>
-          <div className="mt-12 grid gap-3 md:grid-cols-3">
-            <article className="border border-line p-7"><p className="text-[10px] font-bold uppercase tracking-[0.24em] text-muted">Create</p><h3 className="mt-4 font-display text-3xl">Make it yours.</h3><p className="mt-3 text-sm leading-7 text-muted">Develop the concept, visuals and story that make your idea recognisable.</p></article>
-            <article className="border border-line p-7"><p className="text-[10px] font-bold uppercase tracking-[0.24em] text-muted">Connect</p><h3 className="mt-4 font-display text-3xl">Find your people.</h3><p className="mt-3 text-sm leading-7 text-muted">Build with other ambitious creators, share feedback and grow a community.</p></article>
-            <article className="border border-line p-7"><p className="text-[10px] font-bold uppercase tracking-[0.24em] text-muted">Launch</p><h3 className="mt-4 font-display text-3xl">Take it further.</h3><p className="mt-3 text-sm leading-7 text-muted">Explore clothing, merchandise, collaborations and real-world releases.</p></article>
-          </div>
+          <div className="mb-3 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.2em] text-white/45"><span>{review ? "Final review" : `Question ${stepIndex + 1} of ${steps.length}`}</span><span>{progress}%</span></div>
+          <div className="mb-8 h-1 overflow-hidden bg-white/10"><div className="h-full bg-[#e34242] transition-all duration-500" style={{ width: `${progress}%` }} /></div>
+
+          {!review ? (
+            <article key={current.id} className="animate-[brand-card-in_.45s_cubic-bezier(.16,1,.3,1)_both] border border-white/15 bg-[#111113] p-5 sm:p-10">
+              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#e66a6a]">Brand Branch application</p>
+              <h3 className="mt-5 max-w-2xl font-display text-3xl leading-tight sm:text-5xl">{current.title}</h3>
+              {current.hint ? <p className="mt-3 max-w-xl text-sm leading-6 text-white/50">{current.hint}</p> : null}
+              <div className="mt-8">
+                {current.kind === "text" ? <input autoComplete="off" value={String(value)} onChange={(event) => update(current.id, event.target.value)} placeholder="Type your answer..." className="w-full border border-white/20 bg-black/30 p-4 text-base text-white outline-none placeholder:text-white/30 focus:border-[#e34242]" /> : null}
+                {current.kind === "textarea" ? <textarea value={String(value)} onChange={(event) => update(current.id, event.target.value)} rows={5} placeholder="Write your answer..." className="w-full resize-y border border-white/20 bg-black/30 p-4 text-base leading-7 text-white outline-none placeholder:text-white/30 focus:border-[#e34242]" /> : null}
+                {current.kind === "single" ? <div className="grid gap-2 sm:grid-cols-2">{current.options?.map((option) => <button key={option} type="button" onClick={() => update(current.id, option)} className={`min-h-12 border px-4 text-left text-sm transition ${value === option ? "border-[#e34242] bg-[#e34242]/15 text-white" : "border-white/15 text-white/65 hover:border-white/40"}`}>{option}</button>)}</div> : null}
+                {current.kind === "multi" ? <div className="grid gap-2 sm:grid-cols-2">{current.options?.map((option) => { const active = ((value as string[]) || []).includes(option); return <button key={option} type="button" onClick={() => toggle(current.id, option)} className={`min-h-12 border px-4 text-left text-sm transition ${active ? "border-[#e34242] bg-[#e34242]/15 text-white" : "border-white/15 text-white/65 hover:border-white/40"}`}>{active ? "✓  " : "+  "}{option}</button>; })}</div> : null}
+                {current.kind === "deliverables" ? <div className="space-y-6">{deliverableGroups.map((group) => <div key={group.title}><p className="mb-3 text-[10px] font-bold uppercase tracking-[0.22em] text-white/45">{group.title}</p><div className="grid gap-2 sm:grid-cols-2">{group.options.map((option) => { const active = selected.includes(option); return <button key={option} type="button" onClick={() => toggle("deliverables", option)} className={`min-h-11 border px-3 text-left text-sm transition ${active ? "border-[#e34242] bg-[#e34242]/15 text-white" : "border-white/15 text-white/65 hover:border-white/40"}`}>{active ? "✓  " : "+  "}{option}</button>; })}</div></div>)}<p className="text-xs text-white/40">{selected.length} deliverable{selected.length === 1 ? "" : "s"} selected</p></div> : null}
+                {current.kind === "files" ? <div><input type="file" multiple accept=".png,.jpg,.jpeg,.pdf,image/png,image/jpeg,application/pdf" onChange={(event) => { void handleFiles(event.target.files); event.currentTarget.value = ""; }} className="block w-full text-sm text-white/65 file:mr-4 file:min-h-11 file:border-0 file:bg-white file:px-4 file:font-bold file:text-black" />{attachments.length ? <ul className="mt-4 space-y-2">{attachments.map((file) => <li key={file.filename} className="flex items-center justify-between gap-3 text-xs text-white/65"><span>{file.filename}</span><button type="button" onClick={() => setAttachments((old) => old.filter((item) => item.filename !== file.filename))} className="text-[#f18b8b]">Remove</button></li>)}</ul> : <p className="mt-3 text-xs text-white/35">No files attached.</p>}{fileError ? <p role="alert" className="mt-3 text-sm text-[#ff9c9c]">{fileError}</p> : null}</div> : null}
+                {current.id === "industry" && value === "Other" ? <input value={String(answers.otherIndustry || "")} onChange={(event) => update("otherIndustry", event.target.value)} placeholder="Tell us the industry..." className="mt-4 w-full border border-white/20 bg-black/30 p-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-[#e34242]" /> : null}
+                {current.id === "personality" && ((value as string[]) || []).includes("Other") ? <input value={String(answers.otherPersonality || "")} onChange={(event) => update("otherPersonality", event.target.value)} placeholder="Describe the personality..." className="mt-4 w-full border border-white/20 bg-black/30 p-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-[#e34242]" /> : null}
+                {current.id === "colours" && ((value as string[]) || []).includes("Other") ? <input value={String(answers.customColours || "")} onChange={(event) => update("customColours", event.target.value)} placeholder="Describe your colours..." className="mt-4 w-full border border-white/20 bg-black/30 p-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-[#e34242]" /> : null}
+                {current.id === "deliverables" && selected.includes("Other") ? <input value={String(answers.otherDeliverable || "")} onChange={(event) => update("otherDeliverable", event.target.value)} placeholder="What else should we create?" className="mt-4 w-full border border-white/20 bg-black/30 p-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-[#e34242]" /> : null}
+                {current.id === "delivery" ? <div className="grid gap-2 sm:grid-cols-2">{["Digital design files", "Print-ready files", "Physical printed products", "Design and production assistance", "Not sure yet, recommend what I need"].map((option) => { const active = ((value as string[]) || []).includes(option); return <button key={option} type="button" onClick={() => toggle("delivery", option)} className={`min-h-12 border px-4 text-left text-sm transition ${active ? "border-[#e34242] bg-[#e34242]/15 text-white" : "border-white/15 text-white/65 hover:border-white/40"}`}>{active ? "✓  " : "+  "}{option}</button>; })}</div> : null}
+                <label className="mt-5 flex items-start gap-3 text-xs text-white/45"><input type="checkbox" checked={Boolean(answers.understandScope)} onChange={(event) => update("understandScope", event.target.checked ? "yes" : "")} className="mt-0.5 accent-[#e34242]" />I understand that physical printing or production is confirmed separately after the team reviews the request.</label>
+                {current.id === "phone" ? <p className="mt-3 text-xs text-white/40">We need this number to contact you about your application.</p> : null}
+                {current.id === "email" ? <p className="mt-3 text-xs text-white/40">We'll use this address if we need to send you a written update.</p> : null}
+              </div>
+              <div className="mt-9 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-6">
+                <button type="button" onClick={() => stepIndex === 0 ? document.getElementById("brand-lab")?.scrollIntoView({ behavior: "smooth" }) : setStepIndex((index) => Math.max(0, index - 1))} className="min-h-11 px-3 text-sm text-white/55 hover:text-white">{stepIndex === 0 ? "Back" : "Previous"}</button>
+                <button type="button" disabled={!canContinue} onClick={() => { if (stepIndex === steps.length - 1) setReview(true); else setStepIndex((index) => Math.min(steps.length - 1, index + 1)); }} className="min-h-12 bg-white px-7 text-sm font-bold text-black transition hover:bg-[#e34242] hover:text-white disabled:cursor-not-allowed disabled:opacity-30">{stepIndex === steps.length - 1 ? "Review application" : "Next question"} <span className="ml-3">↗</span></button>
+              </div>
+            </article>
+          ) : (
+            <article className="border border-white/15 bg-[#111113] p-5 sm:p-10">
+              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#e66a6a]">Check before sending</p>
+              <h3 className="mt-4 font-display text-4xl sm:text-5xl">Your application.</h3>
+              <p className="mt-3 text-sm leading-6 text-white/50">Review your answers. You can go back and change anything before submitting.</p>
+              <div className="mt-7 space-y-5">{[
+                ["Brand concept", ["brandName", "purpose", "inspiration", "industry", "audience", "difference"]],
+                ["Personality and visual direction", ["personality", "otherPersonality", "colours", "customColours"]],
+                ["End products / deliverables", ["deliverables", "otherDeliverable", "delivery", "businessCardDetails", "socialPlatforms", "packagingDetails"]],
+                ["Additional information", ["extra"]],
+                ["Contact details", ["fullName", "phone", "email", "empId"]],
+              ].map(([heading, keys]) => <div key={String(heading)} className="border-t border-white/10 pt-4"><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/45">{heading}</p><dl className="mt-3 space-y-2">{(keys as string[]).map((key) => { const item = answers[key]; const display = Array.isArray(item) ? item.join(", ") : String(item || ""); return display ? <div key={key} className="grid gap-1 sm:grid-cols-[9rem_1fr]"><dt className="text-xs capitalize text-white/40">{key.replace(/([A-Z])/g, " $1")}</dt><dd className="break-words text-sm text-white/80">{display}</dd></div> : null; })}</dl></div>)}</div>
+              <p className="mt-5 text-xs text-white/40">Attachments: {attachments.map((file) => file.filename).join(", ") || "None"}</p>
+              <label className="mt-6 flex items-start gap-3 border-t border-white/10 pt-5 text-xs leading-6 text-white/55"><input type="checkbox" checked={answers.understandScope === "yes"} onChange={(event) => update("understandScope", event.target.checked ? "yes" : "")} className="mt-1 accent-[#e34242]" />I understand that physical printing or production is confirmed separately after the team reviews the request.</label>
+              {submitError ? <p role="alert" className="mt-4 text-sm leading-6 text-[#ff9c9c]">{submitError}</p> : null}
+              <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-6"><button type="button" onClick={() => { setReview(false); setStepIndex(steps.length - 1); }} className="min-h-11 px-3 text-sm text-white/55 hover:text-white">Back to answers</button><button type="button" disabled={sending || answers.understandScope !== "yes"} onClick={() => void submit()} className="min-h-12 bg-white px-7 text-sm font-bold text-black transition hover:bg-[#e34242] hover:text-white disabled:cursor-not-allowed disabled:opacity-30">{sending ? "Submitting..." : "Confirm and submit"} <span className="ml-3">↗</span></button></div>
+            </article>
+          )}
+          <p className="mt-6 text-center text-[10px] leading-5 text-white/35">Your details are used to review this application and contact you. Submissions are subject to review and acceptance.</p>
         </div>
       </section>
 
-      <section className="border-t border-white/10 bg-[#e34242] px-4 py-16 text-white sm:py-20">
-        <div className="mx-auto flex max-w-6xl flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
-          <div><p className="text-[10px] font-bold uppercase tracking-[0.28em] text-white/70">04 / Your move</p><h2 className="mt-4 max-w-2xl font-display text-4xl leading-[1.02] tracking-tight sm:text-6xl">Got a brand idea<br />living in your notes?</h2><p className="mt-5 max-w-xl text-sm leading-7 text-white/80">Bring it out of the drafts. EMP is building a space for young creators to connect, learn and develop their ideas.</p></div>
-          <Link to="/#involved" className="inline-flex min-h-12 shrink-0 items-center justify-center border border-white/70 px-6 text-sm font-bold text-white transition hover:bg-white hover:text-[#e34242]">Connect with EMP <span className="ml-4">↗</span></Link>
-        </div>
-      </section>
-
-      <section className="px-4 py-8">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 text-[10px] font-bold uppercase tracking-[0.2em] text-muted"><span>Brand Branch · An EMP Exclusive brand house</span><span>Ideas → Identity → Impact</span></div>
+      <section className="bg-[#e34242] px-4 py-16 text-white sm:py-20">
+        <div className="mx-auto flex max-w-6xl flex-col gap-8 sm:flex-row sm:items-end sm:justify-between"><div><p className="text-[10px] font-bold uppercase tracking-[0.28em] text-white/70">04 / Your move</p><h2 className="mt-4 max-w-2xl font-display text-4xl leading-[1.02] tracking-tight sm:text-6xl">Ideas grow here.</h2><p className="mt-5 max-w-xl text-sm leading-7 text-white/80">Brand Branch · An EMP Exclusive brand house.</p></div><a href="mailto:empexclusive.planet@gmail.com" className="inline-flex min-h-12 shrink-0 items-center justify-center border border-white/70 px-6 text-sm font-bold text-white transition hover:bg-white hover:text-[#e34242]">Contact EMP ↗</a></div>
       </section>
     </main>
   );
