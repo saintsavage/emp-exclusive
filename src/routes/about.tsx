@@ -40,6 +40,23 @@ function AboutPage() {
         </blockquote>
       </article>
 
+      <article className="mt-14">
+        <p className="text-xs tracking-[0.28em] text-subtle uppercase">Note 03</p>
+        <h2 className="mt-2 font-display text-3xl tracking-tight">The floor stays open.</h2>
+        <div className="mt-5 space-y-5 text-pretty text-lg text-fg/90">
+          <p>
+            EMP Exclusive is a creative house, and the vision is what sets it apart. It does not stop
+            with its own members.
+          </p>
+          <p>
+            The same house is a platform. Other people can bring their projects here. Other brands
+            can build with us. The work gets a stage because the vision is wide enough to hold more
+            than one name.
+          </p>
+        </div>
+        <p className="mt-6 text-sm tracking-[0.22em] text-muted uppercase">Planet Tumi, Director</p>
+      </article>
+
       <dl className="mt-12 grid gap-6 sm:grid-cols-2">
         <div className="rounded-xl bg-surface p-5 shadow-[var(--shadow-border)]">
           <dt className="text-xs tracking-[0.22em] text-subtle uppercase">Founded</dt>
