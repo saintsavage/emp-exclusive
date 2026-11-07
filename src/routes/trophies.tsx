@@ -108,9 +108,9 @@ function BrandBranchMark({ compact = false }: { compact?: boolean }) {
     <div className={"inline-flex items-center gap-3 " + (compact ? "gap-2" : "")} aria-label="Brand Branch logo">
       <svg viewBox="0 0 88 88" role="img" aria-label="BB monogram" className={compact ? "h-10 w-10 shrink-0" : "h-16 w-16 shrink-0 sm:h-20 sm:w-20"}>
         <rect x="2" y="2" width="84" height="84" rx="12" fill="#09090b" stroke="#f4f4f0" strokeWidth="2"/>
-        <path d="M18 17h22c13 0 20 6 20 17 0 7-4 12-10 14 8 2 13 7 13 16 0 12-9 19-23 19H18V17Zm14 13v14h8c5 0 8-2 8-7s-3-7-8-7h-8Zm0 26v15h9c6 0 9-3 9-8s-3-7-9-7h-9Z" fill="#f4f4f0"/>
-        <path d="M58 18h12v52H58z" fill="#e34242"/>
-        <path d="M55 16h18v5H55z" fill="#e34242"/>
+        <text x="8" y="65" fill="#f4f4f0" fontFamily="Arial, sans-serif" fontSize="62" fontWeight="900" letterSpacing="-12">B</text>
+        <text x="38" y="65" fill="#e34242" fontFamily="Arial, sans-serif" fontSize="62" fontWeight="900" letterSpacing="-12">B</text>
+        <path d="M12 73h64" stroke="#f4f4f0" strokeOpacity=".5" strokeWidth="1"/>
       </svg>
       <span className="leading-none"><span className="block font-display text-sm font-bold tracking-[0.24em] text-white">BRAND</span><span className="mt-1 block font-display text-sm font-bold tracking-[0.24em] text-white">BRANCH<span className="text-[#e34242]">.</span></span></span>
     </div>
