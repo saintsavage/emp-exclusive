@@ -27,7 +27,6 @@ const applicationSchema = z.object({
   fullName: z.string().trim().min(2).max(100),
   phone: z.string().trim().min(6).max(40),
   email: z.string().trim().email().max(254),
-  empId: z.string().max(80),
   website: z.string().max(0).optional(),
   attachments: z.array(z.object({
     filename: z.string().max(120),
@@ -71,7 +70,6 @@ const sendBrandApplication = createServerFn({ method: "POST" })
       `Packaging details: ${data.packagingDetails || "Not applicable"}`,
       "",
       `Additional information: ${data.extra || "Not provided"}`,
-      `EMP ID username: ${data.empId || "Not provided"}`,
       "",
       "CONTACT DETAILS",
       `Full name: ${data.fullName}`,
@@ -105,6 +103,20 @@ const sendBrandApplication = createServerFn({ method: "POST" })
 
 export const Route = createFileRoute("/trophies")({ component: BrandBranchPage });
 
+function BrandBranchMark({ compact = false }: { compact?: boolean }) {
+  return (
+    <div className={"inline-flex items-center gap-3 " + (compact ? "gap-2" : "")} aria-label="Brand Branch logo">
+      <svg viewBox="0 0 88 88" role="img" aria-label="BB monogram" className={compact ? "h-10 w-10 shrink-0" : "h-16 w-16 shrink-0 sm:h-20 sm:w-20"}>
+        <rect x="2" y="2" width="84" height="84" rx="12" fill="#09090b" stroke="#f4f4f0" strokeWidth="2"/>
+        <path d="M18 17h22c13 0 20 6 20 17 0 7-4 12-10 14 8 2 13 7 13 16 0 12-9 19-23 19H18V17Zm14 13v14h8c5 0 8-2 8-7s-3-7-8-7h-8Zm0 26v15h9c6 0 9-3 9-8s-3-7-9-7h-9Z" fill="#f4f4f0"/>
+        <path d="M58 18h12v52H58z" fill="#e34242"/>
+        <path d="M55 16h18v5H55z" fill="#e34242"/>
+      </svg>
+      <span className="leading-none"><span className="block font-display text-sm font-bold tracking-[0.24em] text-white">BRAND</span><span className="mt-1 block font-display text-sm font-bold tracking-[0.24em] text-white">BRANCH<span className="text-[#e34242]">.</span></span></span>
+    </div>
+  );
+}
+
 const stages = [
   ["01", "Find your thing", "Start with what you care about: fashion, art, music, gaming, sport, tech or an idea nobody around you has tried yet."],
   ["02", "Build the identity", "Shape a name, a look, a voice and a reason for people to connect with your brand."],
@@ -124,27 +136,26 @@ const deliverableGroups = [
 type Step = { id: string; title: string; hint?: string; kind: "text" | "textarea" | "single" | "multi" | "deliverables" | "files"; required?: boolean; options?: string[] };
 
 const baseSteps: Step[] = [
-  { id: "brandName", title: "What is your brand called?", hint: "A working name is fine. We can help refine it.", kind: "text", required: true },
-  { id: "purpose", title: "What does your brand represent?", hint: "Tell us the idea, purpose or story behind it.", kind: "textarea", required: true },
-  { id: "inspiration", title: "What inspired the idea?", kind: "textarea" },
-  { id: "industry", title: "Which space does it belong to?", kind: "single", required: true, options: ["Fashion", "Technology", "Entertainment", "Beauty", "Lifestyle", "Business", "Art and design", "Food", "Sport", "Other"] },
-  { id: "audience", title: "Who do you want to reach?", hint: "Think about the people who would connect with your brand.", kind: "textarea", required: true },
-  { id: "difference", title: "What makes it different?", kind: "textarea" },
-  { id: "ambition", title: "What do you want this brand to become?", hint: "Think beyond launch day. What is the bigger vision?", kind: "textarea" },
-  { id: "timeline", title: "When would you like to get started?", kind: "single", options: ["As soon as possible", "Within a month", "Flexible / no fixed deadline", "Not sure yet"] },
-  { id: "personality", title: "What should the brand feel like?", hint: "Choose as many as you like.", kind: "multi", options: ["Luxury", "Streetwear", "Minimalist", "Futuristic", "Corporate", "Creative", "Sporty", "Elegant", "Playful", "Bold", "Other"] },
-  { id: "colours", title: "Which colours fit your vision?", hint: "Choose a palette or describe your own.", kind: "multi", options: ["Black and white", "Red and black", "Blue and silver", "Earth tones", "Pastels", "Monochrome", "Bright colours", "Other"] },
-  { id: "deliverables", title: "What do you want us to create?", hint: "Select every end product you need. You can choose across different categories.", kind: "deliverables", required: true },
-  { id: "delivery", title: "How would you like to receive the work?", hint: "Choose what you need. Physical production is assessed separately.", kind: "multi", options: ["Digital design files", "Print-ready files", "Physical printed products", "Design and production assistance", "Not sure yet, recommend what I need"] },
+  { id: "brandName", title: "What is your brand called?", hint: "A draft name is fine.", kind: "text", required: true },
+  { id: "purpose", title: "What's the idea behind it?", hint: "A few sentences are enough.", kind: "textarea", required: true },
+  { id: "inspiration", title: "What inspired you?", kind: "textarea" },
+  { id: "industry", title: "What kind of brand is it?", kind: "single", required: true, options: ["Fashion", "Technology", "Entertainment", "Beauty", "Lifestyle", "Business", "Art and design", "Food", "Sport", "Other"] },
+  { id: "audience", title: "Who is it for?", hint: "Describe your ideal customers or community.", kind: "textarea", required: true },
+  { id: "difference", title: "What makes it special?", kind: "textarea" },
+  { id: "ambition", title: "What's your big goal for it?", kind: "textarea" },
+  { id: "timeline", title: "When do you want to start?", kind: "single", options: ["As soon as possible", "Within a month", "No rush", "Not sure yet"] },
+  { id: "personality", title: "Choose your brand's style", hint: "Select all that fit.", kind: "multi", options: ["Luxury", "Streetwear", "Minimalist", "Futuristic", "Corporate", "Creative", "Sporty", "Elegant", "Playful", "Bold", "Other"] },
+  { id: "colours", title: "Choose your colours", hint: "Select a palette or choose Other.", kind: "multi", options: ["Black and white", "Red and black", "Blue and silver", "Earth tones", "Pastels", "Monochrome", "Bright colours", "Other"] },
+  { id: "deliverables", title: "What do you need made?", hint: "Pick everything you need.", kind: "deliverables", required: true },
+  { id: "delivery", title: "How should we deliver it?", hint: "Choose all that apply.", kind: "multi", options: ["Digital files", "Print-ready files", "Printed products", "Help with production", "Not sure, advise me"] },
 ];
 
 const contactSteps: Step[] = [
-  { id: "extra", title: "Anything else we should know?", hint: "Add requirements, references, existing materials, inspiration or your preferred timeline.", kind: "textarea" },
-  { id: "files", title: "Have anything you can show us?", hint: "Optional: upload up to 3 reference images or PDFs (2 MB each).", kind: "files" },
-  { id: "fullName", title: "What's your full name?", kind: "text", required: true },
-  { id: "phone", title: "What's the best phone number to reach you on?", hint: "Required. Include your country code.", kind: "text", required: true },
-  { id: "email", title: "What's your email address?", kind: "text", required: true },
-  { id: "empId", title: "EMP ID username (if you have one)", hint: "Optional. EMP ID is being developed as a shared ecosystem identity.", kind: "text" },
+  { id: "extra", title: "Anything else to add?", hint: "Share any extra details or links.", kind: "textarea" },
+  { id: "files", title: "Add reference files (optional)", hint: "Up to 3 images or PDFs, 2 MB each.", kind: "files" },
+  { id: "fullName", title: "Your name", kind: "text", required: true },
+  { id: "phone", title: "Your phone number", hint: "Include your country code.", kind: "text", required: true },
+  { id: "email", title: "Your email address", kind: "text", required: true },
 ];
 
 const initialAnswers: Record<string, string | string[]> = {
@@ -152,7 +163,7 @@ const initialAnswers: Record<string, string | string[]> = {
   audience: "", difference: "", ambition: "", timeline: "", personality: [], otherPersonality: "",
   colours: [], customColours: "", deliverables: [], otherDeliverable: "",
   delivery: [], businessCardDetails: "", socialPlatforms: "", packagingDetails: "",
-  extra: "", fullName: "", phone: "", email: "", empId: "",
+  extra: "", fullName: "", phone: "", email: "",
 };
 
 function BrandBranchPage() {
@@ -168,9 +179,9 @@ function BrandBranchPage() {
   const selected = (answers.deliverables as string[]) || [];
   const steps = useMemo(() => {
     const conditional: Step[] = [];
-    if (selected.includes("Business cards")) conditional.push({ id: "businessCardDetails", title: "A few details about the business cards", hint: "How many people need cards? Single or double-sided? Design only, or design and printing?", kind: "textarea" });
-    if (selected.includes("Social media profile branding") || selected.includes("Social media post templates")) conditional.push({ id: "socialPlatforms", title: "Which social platforms do you use?", hint: "For example Instagram, TikTok, Facebook or X.", kind: "text" });
-    if (selected.includes("Product packaging")) conditional.push({ id: "packagingDetails", title: "Tell us about the packaging", hint: "What product is it for? What format, size or material do you have in mind?", kind: "textarea" });
+    if (selected.includes("Business cards")) conditional.push({ id: "businessCardDetails", title: "Business card details", hint: "How many cards, and do you need printing too?", kind: "textarea" });
+    if (selected.includes("Social media profile branding") || selected.includes("Social media post templates")) conditional.push({ id: "socialPlatforms", title: "Which social apps?", hint: "E.g. Instagram, TikTok or Facebook.", kind: "text" });
+    if (selected.includes("Product packaging")) conditional.push({ id: "packagingDetails", title: "What needs packaging?", hint: "Tell us the product and any size or material ideas.", kind: "textarea"});
     return [...baseSteps, ...conditional, ...contactSteps];
   }, [selected.join("|")]);
   const current = steps[Math.min(stepIndex, steps.length - 1)];
@@ -234,7 +245,6 @@ function BrandBranchPage() {
         fullName: String(answers.fullName || ""),
         phone: String(answers.phone || ""),
         email: String(answers.email || ""),
-        empId: String(answers.empId || ""),
         website: "",
         attachments,
       } });
@@ -265,7 +275,8 @@ function BrandBranchPage() {
         <div className="absolute -right-12 top-20 size-56 rounded-full border border-[#e34242]/45 sm:size-[26rem]" />
         <div className="absolute bottom-0 left-0 h-1 w-2/3 bg-gradient-to-r from-[#e34242] via-white/50 to-transparent" />
         <div className="relative mx-auto max-w-6xl">
-          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/50">EMP Exclusive · The youth brand house</p>
+          <BrandBranchMark />
+          <p className="mt-8 text-[10px] font-bold uppercase tracking-[0.3em] text-white/50">EMP Exclusive · The youth brand house</p>
           <p className="mt-12 text-xs font-bold uppercase tracking-[0.28em] text-[#e66a6a]">For the next generation of founders</p>
           <h1 className="mt-4 max-w-4xl font-display text-6xl leading-[0.88] tracking-tight sm:text-8xl md:text-9xl">Don't just wear<br /><span className="text-white/40">a brand.</span><br />Build one.</h1>
           <p className="mt-8 max-w-2xl text-base leading-8 text-white/65 sm:text-lg">Brand Branch is a creative launchpad for ambitious people with ideas of their own. Bring your style, your interests and your big plans. We'll help shape the direction and the identity.</p>
@@ -309,14 +320,14 @@ function BrandBranchPage() {
           <div className="mb-10">
             <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#e66a6a]">03 / Join Brand Branch</p>
             <h2 className="mt-4 font-display text-4xl leading-tight sm:text-6xl">Let's build your idea.</h2>
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-white/55">A few short cards, one question at a time. Take your time and give us the details that matter.</p>
+            <p className="mt-4 max-w-2xl text-sm leading-7 text-white/55">Short questions, one at a time. Answer what you can.</p>
           </div>
           <div className="mb-3 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.2em] text-white/45"><span>{review ? "Final review" : `Question ${stepIndex + 1} of ${steps.length}`}</span><span>{progress}%</span></div>
           <div className="mb-8 h-1 overflow-hidden bg-white/10"><div className="h-full bg-[#e34242] transition-all duration-500" style={{ width: `${progress}%` }} /></div>
 
           {!review ? (
             <article key={current.id} className="animate-[brand-card-in_.45s_cubic-bezier(.16,1,.3,1)_both] border border-white/15 bg-[#111113] p-5 sm:p-10">
-              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#e66a6a]">Brand Branch application</p>
+              <div className="mb-6 flex items-center justify-between gap-4"><BrandBranchMark compact /><p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#e66a6a]">Application</p></div>
               <h3 className="mt-5 max-w-2xl font-display text-3xl leading-tight sm:text-5xl">{current.title}</h3>
               {current.hint ? <p className="mt-3 max-w-xl text-sm leading-6 text-white/50">{current.hint}</p> : null}
               <div className="mt-8">
@@ -340,7 +351,7 @@ function BrandBranchPage() {
             </article>
           ) : (
             <article className="border border-white/15 bg-[#111113] p-5 sm:p-10">
-              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#e66a6a]">Check before sending</p>
+              <div className="mb-6 flex items-center justify-between gap-4"><BrandBranchMark compact /><p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#e66a6a]">Final check</p></div>
               <h3 className="mt-4 font-display text-4xl sm:text-5xl">Your application.</h3>
               <p className="mt-3 text-sm leading-6 text-white/50">Review your answers. You can go back and change anything before submitting.</p>
               <div className="mt-7 space-y-5">{[
@@ -348,7 +359,7 @@ function BrandBranchPage() {
                 ["Personality and visual direction", ["personality", "otherPersonality", "colours", "customColours"]],
                 ["End products / deliverables", ["deliverables", "otherDeliverable", "delivery", "businessCardDetails", "socialPlatforms", "packagingDetails"]],
                 ["Additional information", ["extra"]],
-                ["Contact details", ["fullName", "phone", "email", "empId"]],
+                ["Contact details", ["fullName", "phone", "email"]],
               ].map(([heading, keys]) => <div key={String(heading)} className="border-t border-white/10 pt-4"><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/45">{heading}</p><dl className="mt-3 space-y-2">{(keys as string[]).map((key) => { const item = answers[key]; const display = Array.isArray(item) ? item.join(", ") : String(item || ""); return display ? <div key={key} className="grid gap-1 sm:grid-cols-[9rem_1fr]"><dt className="text-xs capitalize text-white/40">{key.replace(/([A-Z])/g, " $1")}</dt><dd className="break-words text-sm text-white/80">{display}</dd></div> : null; })}</dl></div>)}</div>
               <p className="mt-5 text-xs text-white/40">Attachments: {attachments.map((file) => file.filename).join(", ") || "None"}</p>
               <label className="mt-6 flex items-start gap-3 border-t border-white/10 pt-5 text-xs leading-6 text-white/55"><input type="checkbox" checked={answers.understandScope === "yes"} onChange={(event) => update("understandScope", event.target.checked ? "yes" : "")} className="mt-1 accent-[#e34242]" />I understand that physical printing or production is confirmed separately after the team reviews the request.</label>
