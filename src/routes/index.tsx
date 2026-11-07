@@ -1,5 +1,28 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
+
+const sendContactEmail = createServerFn({ method: "POST" })
+  .inputValidator(z.object({ name: z.string().trim().min(2).max(100), email: z.string().trim().email().max(254), message: z.string().trim().min(10).max(5000) }))
+  .handler(async ({ data }) => {
+    const apiKey = process.env.RESEND_API_KEY;
+    const fromEmail = process.env.CONTACT_FROM_EMAIL;
+    if (!apiKey || !fromEmail) throw new Error("Email delivery is not configured yet. Please use WhatsApp for now.");
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from: `EMP Exclusive Website <${fromEmail}>`,
+        to: ["empexclusive.planet@gmail.com"],
+        reply_to: data.email,
+        subject: `Website enquiry from ${data.name}`,
+        text: `Name: ${data.name}\\nEmail: ${data.email}\\n\\n${data.message}`,
+      }),
+    });
+    if (!response.ok) throw new Error("Your message could not be delivered. Please try WhatsApp instead.");
+    return { sent: true };
+  });
 
 export const Route = createFileRoute("/")({ component: Home });
 
@@ -12,6 +35,10 @@ const projects = [
 
 function Home() {
   const [message, setMessage] = useState("");
+  const [contactName, setContactName] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [sending, setSending] = useState(false);
+  const [emailStatus, setEmailStatus] = useState("");
   const whatsappUrlOne = `https://wa.me/26776702785?text=${encodeURIComponent(message.trim())}`;
   const whatsappUrlTwo = `https://wa.me/26777506421?text=${encodeURIComponent(message.trim())}`;
 
@@ -114,16 +141,67 @@ function Home() {
         <div className="mt-12 grid gap-8 border-t border-line pt-9 md:grid-cols-[1.1fr_0.9fr]">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted">Send us a message</p>
-            <label htmlFor="contact-message" className="sr-only">Your message</label>
-            <textarea
-              id="contact-message"
-              value={message}
-              onChange={(event) => setMessage(event.target.value)}
-              placeholder="Tell us what you're thinking..."
-              rows={5}
-              className="mt-4 w-full resize-y border border-line bg-transparent p-4 text-sm leading-7 text-fg outline-none transition placeholder:text-muted/60 focus:border-[#d94a4a]"
-            />
-            <div className="mt-4 flex flex-wrap gap-3">
+            <form
+              className="mt-4 space-y-3"
+              onSubmit={async (event) => {
+                event.preventDefault();
+                setSending(true);
+                setEmailStatus("");
+                try {
+                  await sendContactEmail({ data: { name: contactName, email: contactEmail, message } });
+                  setEmailStatus("Your message has been sent to EMP Exclusive.");
+                  setMessage("");
+                  setContactName("");
+                  setContactEmail("");
+                } catch (error) {
+                  setEmailStatus(error instanceof Error ? error.message : "Message could not be sent. Please try WhatsApp.");
+                } finally {
+                  setSending(false);
+                }
+              }}
+            >
+              <input
+                aria-label="Your name"
+                value={contactName}
+                onChange={(event) => setContactName(event.target.value)}
+                placeholder="Your name"
+                required
+                minLength={2}
+                maxLength={100}
+                className="w-full border border-line bg-transparent p-4 text-sm text-fg outline-none transition placeholder:text-muted/60 focus:border-[#d94a4a]"
+              />
+              <input
+                aria-label="Your email address"
+                type="email"
+                value={contactEmail}
+                onChange={(event) => setContactEmail(event.target.value)}
+                placeholder="Your email address"
+                required
+                maxLength={254}
+                className="w-full border border-line bg-transparent p-4 text-sm text-fg outline-none transition placeholder:text-muted/60 focus:border-[#d94a4a]"
+              />
+              <label htmlFor="contact-message" className="sr-only">Your message</label>
+              <textarea
+                id="contact-message"
+                value={message}
+                onChange={(event) => setMessage(event.target.value)}
+                placeholder="Tell us what you're thinking..."
+                rows={5}
+                required
+                minLength={10}
+                maxLength={5000}
+                className="w-full resize-y border border-line bg-transparent p-4 text-sm leading-7 text-fg outline-none transition placeholder:text-muted/60 focus:border-[#d94a4a]"
+              />
+              <button
+                type="submit"
+                disabled={sending || !contactName.trim() || !contactEmail.trim() || message.trim().length < 10}
+                className="inline-flex min-h-12 items-center justify-center bg-white px-6 text-sm font-bold text-black transition hover:bg-[#e34242] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {sending ? "Sending..." : "Send email"} <span className="ml-3">↗</span>
+              </button>
+              {emailStatus ? <p role="status" className="text-sm leading-6 text-muted">{emailStatus}</p> : null}
+            </form>
+            <div className="mt-7 flex flex-wrap gap-3">
               <a
                 href={message.trim() ? whatsappUrlOne : undefined}
                 target="_blank"
@@ -145,7 +223,7 @@ function Home() {
                 WhatsApp 2 <span className="ml-3">↗</span>
               </a>
             </div>
-            <p className="mt-3 text-xs leading-6 text-muted">Choose either number. WhatsApp opens with your message ready for you to review and send.</p>
+            <p className="mt-3 text-xs leading-6 text-muted">WhatsApp opens with your message ready for you to review and send. Email enquiries go to empexclusive.planet@gmail.com once delivery is configured.</p>
           </div>
 
           <div className="flex flex-col justify-center gap-5">
@@ -168,7 +246,7 @@ function Home() {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-wrap items-center justify-between gap-5 border-t border-line pt-7"><div><p className="font-display text-2xl">EMP Exclusive</p><p className="mt-2 text-[10px] font-bold uppercase tracking-[0.22em] text-muted">Francistown · Botswana · Building beyond borders</p></div><span className="text-sm font-semibold text-muted">Open to thoughtful collaborations</span></div>
+        <div className="mt-10 flex flex-wrap items-center justify-between gap-5 border-t border-line pt-7"><div><p className="font-display text-2xl">EMP Exclusive</p><p className="mt-2 text-[10px] font-bold uppercase tracking-[0.22em] text-muted">Francistown · Botswana · Building beyond borders</p><a href="mailto:empexclusive.planet@gmail.com" className="mt-3 inline-block text-sm text-muted transition hover:text-fg">empexclusive.planet@gmail.com ↗</a></div><span className="text-sm font-semibold text-muted">Open to thoughtful collaborations</span></div>
       </section>
     </main>
   );
