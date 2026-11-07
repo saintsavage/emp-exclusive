@@ -361,7 +361,7 @@ function BrandBranchPage() {
       </section>
 
       <section className="bg-[#e34242] px-4 py-16 text-white sm:py-20">
-        <div className="mx-auto flex max-w-6xl flex-col gap-8 sm:flex-row sm:items-end sm:justify-between"><div><p className="text-[10px] font-bold uppercase tracking-[0.28em] text-white/70">04 / Your move</p><h2 className="mt-4 max-w-2xl font-display text-4xl leading-[1.02] tracking-tight sm:text-6xl">Ideas grow here.</h2><p className="mt-5 max-w-xl text-sm leading-7 text-white/80">Brand Branch · An EMP Exclusive brand house.</p></div><a href="mailto:empexclusive.planet@gmail.com" className="inline-flex min-h-12 shrink-0 items-center justify-center border border-white/70 px-6 text-sm font-bold text-white transition hover:bg-white hover:text-[#e34242]">Contact EMP ↗</a></div>
+        <div className="mx-auto flex max-w-6xl flex-col gap-8 sm:flex-row sm:items-end sm:justify-between"><div><p className="text-[10px] font-bold uppercase tracking-[0.28em] text-white/70">04 / Your move</p><h2 className="mt-4 max-w-2xl font-display text-4xl leading-[1.02] tracking-tight sm:text-6xl">Ideas grow here.</h2><p className="mt-5 max-w-xl text-sm leading-7 text-white/80">Brand Branch · An EMP Exclusive brand house.</p></div><a href="/#involved" className="inline-flex min-h-12 shrink-0 items-center justify-center border border-white/70 px-6 text-sm font-bold text-white transition hover:bg-white hover:text-[#e34242]">Contact Us ↗</a></div>
       </section>
     </main>
   );
