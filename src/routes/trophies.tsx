@@ -1,6 +1,29 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/trophies")({ component: BrandBranchesPage });
+function BrandBranchMark({ compact = false }: { compact?: boolean }) {
+  return (
+    <div className={compact ? "flex items-center gap-3" : "flex flex-col items-start gap-5"}>
+      <svg viewBox="0 0 240 170" role="img" aria-label="Brand Branch BB logo" className={compact ? "h-14 w-20" : "h-28 w-40 sm:h-36 sm:w-52"}>
+        <defs>
+          <linearGradient id="bb-accent" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#f06b6b" />
+            <stop offset="100%" stopColor="#b91f2b" />
+          </linearGradient>
+        </defs>
+        <path d="M34 140V30h54c29 0 43 14 43 35 0 15-8 25-21 30 18 4 29 16 29 34 0 26-19 41-49 41H34Z" fill="none" stroke="white" strokeWidth="13" strokeLinejoin="round" transform="translate(0 -12) scale(.88 1)" />
+        <path d="M115 140V30h50c29 0 44 14 44 35 0 15-8 25-22 30 18 4 30 16 30 34 0 26-20 41-50 41h-52" fill="none" stroke="url(#bb-accent)" strokeWidth="13" strokeLinejoin="round" transform="translate(-3 -12) scale(.88 1)" />
+        <path d="M120 12v25m0-8L99 9m21 20 22-20M120 37 96 55m24-18 25 18" fill="none" stroke="url(#bb-accent)" strokeWidth="5" strokeLinecap="round" />
+        <circle cx="120" cy="10" r="5" fill="white" />
+      </svg>
+      <div>
+        <p className="font-display text-4xl font-semibold uppercase leading-[0.82] tracking-[0.08em] sm:text-6xl">Brand<span className="text-[#e34242]">.</span><br />Branch<span className="text-[#e34242]">.</span></p>
+        <p className="mt-3 text-[9px] font-bold uppercase tracking-[0.34em] text-white/45 sm:text-[10px]">Ideas grow here · BB</p>
+      </div>
+    </div>
+  );
+}
+
+export const Route = createFileRoute("/Brand Branch")({ component: BrandBranchesPage });
 
 const stages = [
   { n: "01", title: "Find your thing", text: "Start with what you care about: fashion, art, music, gaming, sport, tech or an idea nobody around you has tried yet." },
@@ -17,10 +40,10 @@ function BrandBranchesPage() {
         <div className="absolute -right-12 top-20 size-56 rounded-full border border-[#e34242]/45 sm:size-[26rem]" />
         <div className="absolute bottom-0 left-0 h-1 w-2/3 bg-gradient-to-r from-[#e34242] via-white/50 to-transparent" />
         <div className="relative mx-auto max-w-6xl">
-          <p className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.3em] text-white/50"><span className="h-px w-8 bg-[#e34242]" /> EMP Exclusive · The youth brand house</p>
+          <div className="flex flex-col gap-10 sm:flex-row sm:items-center sm:justify-between"><BrandBranchMark /><p className="max-w-xs text-[10px] font-bold uppercase tracking-[0.3em] text-white/50"><span className="mb-3 block h-px w-8 bg-[#e34242]" /> EMP Exclusive · The youth brand house</p></div>
           <p className="mt-12 text-xs font-bold uppercase tracking-[0.28em] text-[#e66a6a]">For the next generation of founders</p>
           <h1 className="mt-4 max-w-4xl font-display text-6xl leading-[0.88] tracking-tight sm:text-8xl md:text-9xl">Don't just wear<br /><span className="text-white/40">a brand.</span><br />Build one.</h1>
-          <p className="mt-8 max-w-2xl text-base leading-8 text-white/65 sm:text-lg">Trophies is a creative launchpad for ambitious young people with ideas of their own. Bring your style, your interests and your big plans. We'll make room for them to grow into real brands.</p>
+          <p className="mt-8 max-w-2xl text-base leading-8 text-white/65 sm:text-lg">Brand Branch is a creative launchpad for ambitious young people with ideas of their own. Bring your style, your interests and your big plans. We'll make room for them to grow into real brands.</p>
           <div className="mt-10 flex flex-wrap gap-3">
             <a href="#brand-lab" className="inline-flex min-h-12 items-center bg-white px-6 text-sm font-bold text-black transition hover:bg-[#e34242] hover:text-white">Explore the brand lab <span className="ml-4">↘</span></a>
             <Link to="/#involved" className="inline-flex min-h-12 items-center border border-white/35 px-6 text-sm font-semibold text-white transition hover:bg-white/10">Get involved</Link>
@@ -62,7 +85,7 @@ function BrandBranchesPage() {
         <div className="mx-auto max-w-6xl">
           <div className="grid gap-8 md:grid-cols-[1fr_0.8fr] md:items-end">
             <div><p className="text-xs font-bold uppercase tracking-[0.28em] text-muted">03 / More than a logo</p><h2 className="mt-4 max-w-2xl font-display text-4xl leading-[1.02] tracking-tight sm:text-6xl">Make something people can connect with.</h2></div>
-            <p className="text-base leading-8 text-muted">A brand is more than a name printed on a hoodie. It's a point of view, a community and a promise. Trophies is here to help young creators think beyond the first design and build something with direction.</p>
+            <p className="text-base leading-8 text-muted">A brand is more than a name printed on a hoodie. It's a point of view, a community and a promise. Brand Branch is here to help young creators think beyond the first design and build something with direction.</p>
           </div>
           <div className="mt-12 grid gap-3 md:grid-cols-3">
             <article className="border border-line p-7"><p className="text-[10px] font-bold uppercase tracking-[0.24em] text-muted">Create</p><h3 className="mt-4 font-display text-3xl">Make it yours.</h3><p className="mt-3 text-sm leading-7 text-muted">Develop the concept, visuals and story that make your idea recognisable.</p></article>
@@ -80,7 +103,7 @@ function BrandBranchesPage() {
       </section>
 
       <section className="px-4 py-8">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 text-[10px] font-bold uppercase tracking-[0.2em] text-muted"><span>Trophies · An EMP Exclusive brand house</span><span>Ideas → Identity → Impact</span></div>
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 text-[10px] font-bold uppercase tracking-[0.2em] text-muted"><span>Brand Branch · An EMP Exclusive brand house</span><span>Ideas → Identity → Impact</span></div>
       </section>
     </main>
   );
