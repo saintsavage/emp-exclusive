@@ -132,26 +132,22 @@ const deliverableGroups = [
 type Step = { id: string; title: string; hint?: string; kind: "text" | "textarea" | "single" | "multi" | "deliverables" | "files"; required?: boolean; options?: string[] };
 
 const baseSteps: Step[] = [
-  { id: "brandName", title: "What is your brand called?", hint: "A draft name is fine.", kind: "text", required: true },
-  { id: "purpose", title: "What's the idea behind it?", hint: "A few sentences are enough.", kind: "textarea", required: true },
-  { id: "inspiration", title: "What inspired you?", kind: "textarea" },
-  { id: "industry", title: "What kind of brand is it?", kind: "single", required: true, options: ["Fashion", "Technology", "Entertainment", "Beauty", "Lifestyle", "Business", "Art and design", "Food", "Sport", "Other"] },
-  { id: "audience", title: "Who is it for?", hint: "Describe your ideal customers or community.", kind: "textarea", required: true },
-  { id: "difference", title: "What makes it special?", kind: "textarea" },
-  { id: "ambition", title: "What's your big goal for it?", kind: "textarea" },
-  { id: "timeline", title: "When do you want to start?", kind: "single", options: ["As soon as possible", "Within a month", "No rush", "Not sure yet"] },
-  { id: "personality", title: "Choose your brand's style", hint: "Select all that fit.", kind: "multi", options: ["Luxury", "Streetwear", "Minimalist", "Futuristic", "Corporate", "Creative", "Sporty", "Elegant", "Playful", "Bold", "Other"] },
-  { id: "colours", title: "Choose your colours", hint: "Select a palette or choose Other.", kind: "multi", options: ["Black and white", "Red and black", "Blue and silver", "Earth tones", "Pastels", "Monochrome", "Bright colours", "Other"] },
-  { id: "deliverables", title: "What do you need made?", hint: "Pick everything you need.", kind: "deliverables", required: true },
-  { id: "delivery", title: "How should we deliver it?", hint: "Choose all that apply.", kind: "multi", options: ["Digital files", "Print-ready files", "Printed products", "Help with production", "Not sure, advise me"] },
-];
+  { id: "brandName", title: "What's your brand called?", hint: "A working name is fine.", kind: "text", required: true },
+  { id: "purpose", title: "What's your idea?", hint: "Tell us what you want to create. A few sentences are enough.", kind: "textarea", required: true },
+  { id: "industry", title: "What type of brand is it?", kind: "single", required: true, options: ["Fashion & clothing", "Art & design", "Music & entertainment", "Technology", "Beauty & lifestyle", "Business & services", "Food", "Sport", "Other"] },
+  { id: "audience", title: "Who is it for?", hint: "Who do you want to reach?", kind: "textarea", required: true },
+  { id: "personality", title: "What should it feel like?", hint: "Choose any styles that fit.", kind: "multi", options: ["Luxury", "Streetwear", "Minimal", "Futuristic", "Professional", "Creative", "Sporty", "Elegant", "Playful", "Bold", "Other"] },
+  { id: "colours", title: "Any colour ideas?", hint: "Choose a palette or select Other.", kind: "multi", options: ["Black & white", "Red & black", "Blue & silver", "Earth tones", "Pastels", "Monochrome", "Bright colours", "Other"] },
+  { id: "deliverables", title: "What do you need?", hint: "Select everything you'd like us to help create.", kind: "deliverables", required: true },
+  { id: "delivery", title: "How would you like it delivered?", hint: "Choose all that apply. Not sure? We'll advise.", kind: "multi", options: ["Digital files", "Print-ready files", "Printed products", "Production support", "Not sure yet"] },
+]; 
 
 const contactSteps: Step[] = [
-  { id: "extra", title: "Anything else to add?", hint: "Share any extra details or links.", kind: "textarea" },
-  { id: "files", title: "Add reference files (optional)", hint: "Up to 3 images or PDFs, 2 MB each.", kind: "files" },
-  { id: "fullName", title: "Your name", kind: "text", required: true },
+  { id: "extra", title: "Anything else we should know?", hint: "Add inspiration, goals, links or other details. This is optional.", kind: "textarea" },
+  { id: "files", title: "Have reference files?", hint: "Optional: up to 3 images or PDFs, 2 MB each.", kind: "files" },
+  { id: "fullName", title: "What's your name?", kind: "text", required: true },
   { id: "phone", title: "Your phone number", hint: "Include your country code.", kind: "text", required: true },
-  { id: "email", title: "Your email address", kind: "text", required: true },
+  { id: "email", title: "Your email", kind: "text", required: true },
 ];
 
 const initialAnswers: Record<string, string | string[]> = {
@@ -175,9 +171,9 @@ function BrandBranchPage() {
   const selected = (answers.deliverables as string[]) || [];
   const steps = useMemo(() => {
     const conditional: Step[] = [];
-    if (selected.includes("Business cards")) conditional.push({ id: "businessCardDetails", title: "Business card details", hint: "How many cards, and do you need printing too?", kind: "textarea" });
-    if (selected.includes("Social media profile branding") || selected.includes("Social media post templates")) conditional.push({ id: "socialPlatforms", title: "Which social apps?", hint: "E.g. Instagram, TikTok or Facebook.", kind: "text" });
-    if (selected.includes("Product packaging")) conditional.push({ id: "packagingDetails", title: "What needs packaging?", hint: "Tell us the product and any size or material ideas.", kind: "textarea"});
+    if (selected.includes("Business cards")) conditional.push({ id: "businessCardDetails", title: "Business card details?", hint: "How many do you need? Should we include printing?", kind: "textarea" });
+    if (selected.includes("Social media profile branding") || selected.includes("Social media post templates")) conditional.push({ id: "socialPlatforms", title: "Which social platforms?", hint: "For example, Instagram, TikTok or Facebook.", kind: "text" });
+    if (selected.includes("Product packaging")) conditional.push({ id: "packagingDetails", title: "What are we packaging?", hint: "Tell us the product. Size or material ideas are welcome.", kind: "textarea"});
     return [...baseSteps, ...conditional, ...contactSteps];
   }, [selected.join("|")]);
   const current = steps[Math.min(stepIndex, steps.length - 1)];
@@ -351,11 +347,11 @@ function BrandBranchPage() {
               <h3 className="mt-4 font-display text-4xl sm:text-5xl">Your application.</h3>
               <p className="mt-3 text-sm leading-6 text-white/50">Review your answers. You can go back and change anything before submitting.</p>
               <div className="mt-7 space-y-5">{[
-                ["Brand concept", ["brandName", "purpose", "inspiration", "industry", "audience", "difference", "ambition", "timeline"]],
-                ["Personality and visual direction", ["personality", "otherPersonality", "colours", "customColours"]],
-                ["End products / deliverables", ["deliverables", "otherDeliverable", "delivery", "businessCardDetails", "socialPlatforms", "packagingDetails"]],
-                ["Additional information", ["extra"]],
-                ["Contact details", ["fullName", "phone", "email"]],
+                ["Your brand", ["brandName", "purpose", "industry", "otherIndustry", "audience"]],
+                ["Look and feel", ["personality", "otherPersonality", "colours", "customColours"]],
+                ["What you need", ["deliverables", "otherDeliverable", "delivery", "businessCardDetails", "socialPlatforms", "packagingDetails"]],
+                ["Extra details", ["extra"]],
+                ["Your contact details", ["fullName", "phone", "email"]],
               ].map(([heading, keys]) => <div key={String(heading)} className="border-t border-white/10 pt-4"><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/45">{heading}</p><dl className="mt-3 space-y-2">{(keys as string[]).map((key) => { const item = answers[key]; const display = Array.isArray(item) ? item.join(", ") : String(item || ""); return display ? <div key={key} className="grid gap-1 sm:grid-cols-[9rem_1fr]"><dt className="text-xs capitalize text-white/40">{key.replace(/([A-Z])/g, " $1")}</dt><dd className="break-words text-sm text-white/80">{display}</dd></div> : null; })}</dl></div>)}</div>
               <p className="mt-5 text-xs text-white/40">Attachments: {attachments.map((file) => file.filename).join(", ") || "None"}</p>
               <label className="mt-6 flex items-start gap-3 border-t border-white/10 pt-5 text-xs leading-6 text-white/55"><input type="checkbox" checked={answers.understandScope === "yes"} onChange={(event) => update("understandScope", event.target.checked ? "yes" : "")} className="mt-1 accent-[#e34242]" />I understand that physical printing or production is confirmed separately after the team reviews the request.</label>
