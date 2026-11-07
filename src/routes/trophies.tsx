@@ -105,15 +105,11 @@ export const Route = createFileRoute("/trophies")({ component: BrandBranchPage }
 
 function BrandBranchMark({ compact = false }: { compact?: boolean }) {
   return (
-    <div className={"inline-flex items-center gap-3 " + (compact ? "gap-2" : "")} aria-label="Brand Branch logo">
-      <svg viewBox="0 0 88 88" role="img" aria-label="BB monogram" className={compact ? "h-10 w-10 shrink-0" : "h-16 w-16 shrink-0 sm:h-20 sm:w-20"}>
-        <rect x="2" y="2" width="84" height="84" rx="12" fill="#09090b" stroke="#f4f4f0" strokeWidth="2"/>
-        <text x="8" y="65" fill="#f4f4f0" fontFamily="Arial, sans-serif" fontSize="62" fontWeight="900" letterSpacing="-12">B</text>
-        <text x="38" y="65" fill="#e34242" fontFamily="Arial, sans-serif" fontSize="62" fontWeight="900" letterSpacing="-12">B</text>
-        <path d="M12 73h64" stroke="#f4f4f0" strokeOpacity=".5" strokeWidth="1"/>
-      </svg>
-      <span className="leading-none"><span className="block font-display text-sm font-bold tracking-[0.24em] text-white">BRAND</span><span className="mt-1 block font-display text-sm font-bold tracking-[0.24em] text-white">BRANCH<span className="text-[#e34242]">.</span></span></span>
-    </div>
+    <img
+      src="/images/brand-branch-logo.jpg"
+      alt="Brand Branch BB logo"
+      className={compact ? "h-auto w-36 object-contain" : "h-auto w-64 max-w-full object-contain sm:w-80"}
+    />
   );
 }
 
@@ -300,7 +296,7 @@ function BrandBranchPage() {
               ["02", "Art & design", "Graphics, illustration, photography and visual culture."],
               ["03", "Music & culture", "Creative collectives, sound, events and communities."],
               ["04", "Ideas & innovation", "Products, digital concepts and unexpected ventures."],
-            ].map(([n, title, body]) => <article key={n} className="group border border-line bg-surface p-6 transition hover:-translate-y-1 hover:border-[#d94a4a]/60"><p className="font-display text-3xl text-muted">{n}</p><h3 className="mt-8 font-display text-2xl leading-tight">{title}</h3><p className="mt-3 text-sm leading-7 text-muted">{body}</p><div className="mt-7 h-px w-10 bg-[#d94a4a] transition-all group-hover:w-full" /></article>)}
+            ].map(([n, title, body]) => <article key={n} className="group border border-line bg-surface p-6 transition hover:-translate-y-1 hover:border-[#d94a4a]/60"><img src="/images/brand-branch-logo.jpg" alt="Brand Branch" className="mb-5 h-16 w-full object-contain object-left" /><p className="font-display text-3xl text-muted">{n}</p><h3 className="mt-8 font-display text-2xl leading-tight">{title}</h3><p className="mt-3 text-sm leading-7 text-muted">{body}</p><div className="mt-7 h-px w-10 bg-[#d94a4a] transition-all group-hover:w-full" /></article>)}
           </div>
         </div>
       </section>
