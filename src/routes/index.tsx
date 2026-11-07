@@ -126,8 +126,8 @@ function Home() {
         <div className="absolute -right-20 top-1/2 size-80 -translate-y-1/2 rounded-full border border-white/10 sm:size-[34rem]" />
         <div className="absolute -right-8 top-1/2 size-56 -translate-y-1/2 rounded-full border border-[#d94a4a]/35 sm:size-[26rem]" />
         <div className="relative mx-auto grid max-w-6xl gap-8 px-4 py-16 sm:grid-cols-[1fr_auto] sm:items-center sm:py-24">
-          <div><p className="text-xs font-bold uppercase tracking-[0.28em] text-white/45">04 / Brand branches · Trophies</p><h2 className="mt-4 max-w-2xl font-display text-4xl leading-tight tracking-tight sm:text-6xl">Your idea deserves a name of its own.</h2><p className="mt-5 max-w-2xl text-sm leading-7 text-white/60">A youth-focused launchpad for ambitious creators building their own brands, communities and creative identities. Start with an idea. Give it a direction. Make it real.</p></div>
-          <Link to="/trophies" className="inline-flex min-h-12 items-center justify-center bg-white px-6 text-sm font-bold text-black transition hover:bg-[#e34242] hover:text-white">Meet the brand house <span className="ml-4">↗</span></Link>
+          <div><p className="text-xs font-bold uppercase tracking-[0.28em] text-white/45">04 / Brand Branch</p><h2 className="mt-4 max-w-2xl font-display text-4xl leading-tight tracking-tight sm:text-6xl">Your idea deserves a name of its own.</h2><p className="mt-5 max-w-2xl text-sm leading-7 text-white/60">A youth-focused launchpad for ambitious creators building their own brands, communities and creative identities. Start with an idea. Give it a direction. Make it real.</p></div>
+          <Link to="/trophies" className="inline-flex min-h-12 items-center justify-center bg-white px-6 text-sm font-bold text-black transition hover:bg-[#e34242] hover:text-white">Explore Brand Branch <span className="ml-4">↗</span></Link>
         </div>
       </section>
 
