@@ -301,7 +301,7 @@ function BrandBranchPage() {
               ["02", "Art & design", "Graphics, illustration, photography and visual culture."],
               ["03", "Music & culture", "Creative collectives, sound, events and communities."],
               ["04", "Ideas & innovation", "Products, digital concepts and unexpected ventures."],
-            ].map(([n, title, body]) => <article key={n} className="group border border-line bg-surface p-6 transition hover:-translate-y-1 hover:border-[#d94a4a]/60"><img src="/images/brand-branch-logo.jpg" alt="Brand Branch" className="mb-5 h-16 w-full object-contain object-left" /><p className="font-display text-3xl text-muted">{n}</p><h3 className="mt-8 font-display text-2xl leading-tight">{title}</h3><p className="mt-3 text-sm leading-7 text-muted">{body}</p><div className="mt-7 h-px w-10 bg-[#d94a4a] transition-all group-hover:w-full" /></article>)}
+            ].map(([n, title, body]) => <article key={n} className="group border border-line bg-surface p-6 transition hover:-translate-y-1 hover:border-[#d94a4a]/60"><div className="mb-5 flex h-16 items-center text-fg"><BrandBranchMark compact /></div><p className="font-display text-3xl text-muted">{n}</p><h3 className="mt-8 font-display text-2xl leading-tight">{title}</h3><p className="mt-3 text-sm leading-7 text-muted">{body}</p><div className="mt-7 h-px w-10 bg-[#d94a4a] transition-all group-hover:w-full" /></article>)}
           </div>
         </div>
       </section>
