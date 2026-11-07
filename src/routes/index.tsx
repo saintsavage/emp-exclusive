@@ -33,6 +33,26 @@ const projects = [
   { number: "04", name: "SAYNT AI", category: "Personal technology", status: "IN DEVELOPMENT", description: "A hands-free Android assistant built around voice interaction and everyday commands.", tag: "TECH, REIMAGINED", dark: true },
 ] as const;
 
+
+function BrandBranchLogo() {
+  return (
+    <div className="hidden shrink-0 items-center gap-4 text-white sm:flex">
+      <svg viewBox="0 0 100 100" role="img" aria-label="Brand Branch symbol" className="h-24 w-24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M25 14V86" stroke="currentColor" strokeWidth="5" strokeLinecap="square"/>
+        <path d="M27 17H49C76 17 78 47 49 47H27" stroke="currentColor" strokeWidth="5" strokeLinecap="square" strokeLinejoin="round"/>
+        <path d="M27 49H53C82 49 82 83 53 83H27" stroke="currentColor" strokeWidth="5" strokeLinecap="square" strokeLinejoin="round"/>
+        <path d="M54 49H77" stroke="#e34242" strokeWidth="5" strokeLinecap="square"/>
+        <circle cx="81" cy="49" r="4" fill="#e34242"/>
+      </svg>
+      <div className="leading-none">
+        <p className="font-display text-2xl font-semibold tracking-[0.22em]">BRAND</p>
+        <p className="mt-2 font-display text-2xl font-semibold tracking-[0.22em]">BRANCH<span className="text-[#e34242]">.</span></p>
+        <p className="mt-3 text-[9px] font-semibold uppercase tracking-[0.32em] text-white/45">An EMP Exclusive brand house</p>
+      </div>
+    </div>
+  );
+}
+
 function Home() {
   const [message, setMessage] = useState("");
   const [contactName, setContactName] = useState("");
@@ -126,7 +146,7 @@ function Home() {
         <div className="absolute -right-20 top-1/2 size-80 -translate-y-1/2 rounded-full border border-white/10 sm:size-[34rem]" />
         <div className="absolute -right-8 top-1/2 size-56 -translate-y-1/2 rounded-full border border-[#d94a4a]/35 sm:size-[26rem]" />
         <div className="relative mx-auto grid max-w-6xl gap-8 px-4 py-16 sm:grid-cols-[1fr_auto] sm:items-center sm:py-24">
-          <div className="flex items-center gap-6"><img src="/images/brand-branch-logo.jpg" alt="Brand Branch BB logo" className="hidden h-28 w-48 shrink-0 object-contain sm:block" /><div><p className="text-xs font-bold uppercase tracking-[0.28em] text-white/45">04 / Brand Branch</p><h2 className="mt-4 max-w-2xl font-display text-4xl leading-tight tracking-tight sm:text-6xl">Your idea deserves a name of its own.</h2><p className="mt-5 max-w-2xl text-sm leading-7 text-white/60">A youth-focused launchpad for ambitious creators building their own brands, communities and creative identities. Start with an idea. Give it a direction. Make it real.</p></div></div>
+          <div className="flex items-center gap-6"><BrandBranchLogo /><div><p className="text-xs font-bold uppercase tracking-[0.28em] text-white/45">04 / Brand Branch</p><h2 className="mt-4 max-w-2xl font-display text-4xl leading-tight tracking-tight sm:text-6xl">Your idea deserves a name of its own.</h2><p className="mt-5 max-w-2xl text-sm leading-7 text-white/60">A youth-focused launchpad for ambitious creators building their own brands, communities and creative identities. Start with an idea. Give it a direction. Make it real.</p></div></div>
           <Link to="/trophies" className="inline-flex min-h-12 items-center justify-center bg-white px-6 text-sm font-bold text-black transition hover:bg-[#e34242] hover:text-white">Explore Brand Branch <span className="ml-4">↗</span></Link>
         </div>
       </section>
