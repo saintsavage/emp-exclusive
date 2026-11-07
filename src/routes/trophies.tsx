@@ -105,11 +105,20 @@ export const Route = createFileRoute("/trophies")({ component: BrandBranchPage }
 
 function BrandBranchMark({ compact = false }: { compact?: boolean }) {
   return (
-    <img
-      src="/images/brand-branch-logo.jpg"
-      alt="Brand Branch BB logo"
-      className={compact ? "h-auto w-36 object-contain" : "h-auto w-64 max-w-full object-contain sm:w-80"}
-    />
+    <div className={"flex items-center gap-3"}>
+      <svg viewBox="0 0 100 100" role="img" aria-label="Brand Branch symbol" className={"h-14 w-14 shrink-0"} fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M25 14V86" stroke="currentColor" strokeWidth="5" strokeLinecap="square"/>
+        <path d="M27 17H49C76 17 78 47 49 47H27" stroke="currentColor" strokeWidth="5" strokeLinecap="square" strokeLinejoin="round"/>
+        <path d="M27 49H53C82 49 82 83 53 83H27" stroke="currentColor" strokeWidth="5" strokeLinecap="square" strokeLinejoin="round"/>
+        <path d="M54 49H77" stroke="#e34242" strokeWidth="5" strokeLinecap="square"/>
+        <circle cx="81" cy="49" r="4" fill="#e34242"/>
+      </svg>
+      <div className={"leading-none"}>
+        <p className="font-display text-2xl font-semibold tracking-[0.22em]">BRAND</p>
+        <p className="mt-2 font-display text-2xl font-semibold tracking-[0.22em]">BRANCH<span className="text-[#e34242]">.</span></p>
+        <p className="mt-3 text-[9px] font-semibold uppercase tracking-[0.32em] text-current/45">An EMP Exclusive brand house</p>
+      </div>
+    </div>
   );
 }
 
