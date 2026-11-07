@@ -73,10 +73,53 @@ function Home() {
         </div>
       </section>
 
-      <section
-        aria-label="EMP Exclusive homepage content area"
-        className="mx-auto min-h-[45vh] max-w-6xl px-4 py-12"
-      />
+      <section className="mx-auto max-w-6xl px-4 py-14 sm:py-20">
+        <div className="max-w-3xl">
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-muted">
+            Who we are
+          </p>
+          <h2 className="mt-3 font-display text-3xl tracking-tight sm:text-4xl">
+            More than one project. One bigger purpose.
+          </h2>
+          <p className="mt-5 text-base leading-8 text-muted sm:text-lg">
+            EMP Exclusive is a growing ecosystem built around technology, creativity and
+            opportunities. We bring ideas to life by creating digital platforms, developing
+            innovative projects and giving people room to build, create and grow.
+          </p>
+          <p className="mt-4 text-base leading-8 text-muted sm:text-lg">
+            From technology and entrepreneurship to independent brands and creative
+            initiatives, our goal is simple: build things that make a difference and create
+            opportunities for others along the way. We are a collection of ideas working
+            towards something bigger.
+          </p>
+        </div>
+
+        <div className="mt-14 grid gap-6 border-t border-line pt-10 md:grid-cols-2 md:gap-12">
+          <article>
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-muted">
+              Our mission
+            </p>
+            <h3 className="mt-3 font-display text-2xl tracking-tight">What we do today</h3>
+            <p className="mt-4 leading-7 text-muted">
+              To turn meaningful ideas into useful technology, creative projects and
+              opportunities that help people solve problems, develop their abilities and
+              build something of their own.
+            </p>
+          </article>
+
+          <article>
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-muted">
+              Our vision
+            </p>
+            <h3 className="mt-3 font-display text-2xl tracking-tight">What we are working towards</h3>
+            <p className="mt-4 leading-7 text-muted">
+              To grow into an open, connected ecosystem where people, ideas and independent
+              ventures can thrive, and where innovation creates lasting value for communities
+              across borders.
+            </p>
+          </article>
+        </div>
+      </section>
     </main>
   );
 }
