@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({ component: Home });
@@ -10,6 +11,9 @@ const projects = [
 ] as const;
 
 function Home() {
+  const [message, setMessage] = useState("");
+  const whatsappUrl = `https://wa.me/26776702785?text=${encodeURIComponent(message.trim())}`;
+
   return (
     <main>
       <section className="relative isolate min-h-[650px] overflow-hidden bg-[#080809] text-white sm:min-h-[760px]">
@@ -105,6 +109,46 @@ function Home() {
           <h2 className="max-w-2xl font-display text-4xl leading-[1.02] tracking-tight sm:text-6xl">Bring an idea.<br />Build something real.</h2>
           <p className="text-base leading-8 text-muted">EMP grows through people with ideas, skills and the determination to make them happen. We believe good work gets better when the right people build together.</p>
         </div>
+
+        <div className="mt-12 grid gap-8 border-t border-line pt-9 md:grid-cols-[1.1fr_0.9fr]">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted">Send us a message</p>
+            <label htmlFor="contact-message" className="sr-only">Your message</label>
+            <textarea
+              id="contact-message"
+              value={message}
+              onChange={(event) => setMessage(event.target.value)}
+              placeholder="Tell us what you're thinking..."
+              rows={5}
+              className="mt-4 w-full resize-y border border-line bg-transparent p-4 text-sm leading-7 text-fg outline-none transition placeholder:text-muted/60 focus:border-[#d94a4a]"
+            />
+            <a
+              href={message.trim() ? whatsappUrl : undefined}
+              target="_blank"
+              rel="noreferrer"
+              aria-disabled={!message.trim()}
+              className={`mt-4 inline-flex min-h-12 items-center justify-center px-6 text-sm font-bold transition ${message.trim() ? "bg-[#25D366] text-black hover:bg-[#1fbd5b]" : "cursor-not-allowed bg-line text-muted"}`}
+              onClick={(event) => { if (!message.trim()) event.preventDefault(); }}
+            >
+              Send via WhatsApp <span className="ml-4">↗</span>
+            </a>
+            <p className="mt-3 text-xs leading-6 text-muted">WhatsApp opens with your message ready. You'll review and send it there.</p>
+          </div>
+
+          <div className="flex flex-col justify-center gap-5">
+            <div className="border border-line p-6">
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-muted">WhatsApp</p>
+              <p className="mt-2 font-display text-2xl">+267 76 702 785</p>
+              <p className="mt-2 text-sm leading-6 text-muted">Message EMP Exclusive directly.</p>
+            </div>
+            <a href="tel:+267777506421" className="border border-line p-6 transition hover:border-[#d94a4a]">
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-muted">Call us</p>
+              <p className="mt-2 font-display text-2xl">+267 77 506 421</p>
+              <p className="mt-2 text-sm leading-6 text-muted">Tap to call from your phone.</p>
+            </a>
+          </div>
+        </div>
+
         <div className="mt-10 flex flex-wrap items-center justify-between gap-5 border-t border-line pt-7"><div><p className="font-display text-2xl">EMP Exclusive</p><p className="mt-2 text-[10px] font-bold uppercase tracking-[0.22em] text-muted">Francistown · Botswana · Building beyond borders</p></div><span className="text-sm font-semibold text-muted">Open to thoughtful collaborations</span></div>
       </section>
     </main>
