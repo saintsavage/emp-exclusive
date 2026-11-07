@@ -118,7 +118,7 @@ const deliverableGroups = [
   { title: "Marketing materials", options: ["Flyers", "Posters", "Brochures", "Banners", "Digital advertisements", "Presentation designs"] },
   { title: "Digital presence", options: ["Social media profile branding", "Social media post templates", "Website design", "Landing page", "App interface design"] },
   { title: "Products and merchandise", options: ["T-shirt and clothing designs", "Caps and hoodies", "Mugs and promotional items", "Stickers and labels", "Product packaging"] },
-  { title: "Physical branding", options: ["Shop signage", "Vehicle branding", "Uniforms", "Event displays", "Display stands"] },
+  { title: "Physical branding", options: ["Shop signage", "Vehicle branding", "Uniforms", "Event displays", "Display stands", "Other"] },
 ];
 
 type Step = { id: string; title: string; hint?: string; kind: "text" | "textarea" | "single" | "multi" | "deliverables" | "files"; required?: boolean; options?: string[] };
@@ -331,7 +331,6 @@ function BrandBranchPage() {
                 {current.id === "colours" && ((value as string[]) || []).includes("Other") ? <input value={String(answers.customColours || "")} onChange={(event) => update("customColours", event.target.value)} placeholder="Describe your colours..." className="mt-4 w-full border border-white/20 bg-black/30 p-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-[#e34242]" /> : null}
                 {current.id === "deliverables" && selected.includes("Other") ? <input value={String(answers.otherDeliverable || "")} onChange={(event) => update("otherDeliverable", event.target.value)} placeholder="What else should we create?" className="mt-4 w-full border border-white/20 bg-black/30 p-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-[#e34242]" /> : null}
                 {current.id === "delivery" ? <div className="grid gap-2 sm:grid-cols-2">{["Digital design files", "Print-ready files", "Physical printed products", "Design and production assistance", "Not sure yet, recommend what I need"].map((option) => { const active = ((value as string[]) || []).includes(option); return <button key={option} type="button" onClick={() => toggle("delivery", option)} className={`min-h-12 border px-4 text-left text-sm transition ${active ? "border-[#e34242] bg-[#e34242]/15 text-white" : "border-white/15 text-white/65 hover:border-white/40"}`}>{active ? "✓  " : "+  "}{option}</button>; })}</div> : null}
-                <label className="mt-5 flex items-start gap-3 text-xs text-white/45"><input type="checkbox" checked={Boolean(answers.understandScope)} onChange={(event) => update("understandScope", event.target.checked ? "yes" : "")} className="mt-0.5 accent-[#e34242]" />I understand that physical printing or production is confirmed separately after the team reviews the request.</label>
                 {current.id === "phone" ? <p className="mt-3 text-xs text-white/40">We need this number to contact you about your application.</p> : null}
                 {current.id === "email" ? <p className="mt-3 text-xs text-white/40">We'll use this address if we need to send you a written update.</p> : null}
               </div>
