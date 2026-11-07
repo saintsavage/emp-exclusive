@@ -105,7 +105,7 @@ function Home() {
           <h2 className="max-w-2xl font-display text-4xl leading-[1.02] tracking-tight sm:text-6xl">Bring an idea.<br />Build something real.</h2>
           <p className="text-base leading-8 text-muted">EMP grows through people with ideas, skills and the determination to make them happen. We believe good work gets better when the right people build together.</p>
         </div>
-        <div className="mt-10 flex flex-wrap items-center justify-between gap-5 border-t border-line pt-7"><div><p className="font-display text-2xl">EMP Exclusive</p><p className="mt-2 text-[10px] font-bold uppercase tracking-[0.22em] text-muted">Francistown · Botswana · Building beyond borders</p></div><a href="mailto:hello@empexclusive.com" className="text-sm font-semibold underline decoration-[#d94a4a] underline-offset-8">Start a conversation ↗</a></div>
+        <div className="mt-10 flex flex-wrap items-center justify-between gap-5 border-t border-line pt-7"><div><p className="font-display text-2xl">EMP Exclusive</p><p className="mt-2 text-[10px] font-bold uppercase tracking-[0.22em] text-muted">Francistown · Botswana · Building beyond borders</p></div><span className="text-sm font-semibold text-muted">Open to thoughtful collaborations</span></div>
       </section>
     </main>
   );
