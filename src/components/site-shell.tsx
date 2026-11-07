@@ -8,13 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
-const NAV = [
-  { to: "/", label: "Feed" },
-  { to: "/members", label: "Family" },
-  { to: "/trophies", label: "Trophies" },
-  { to: "/photos", label: "Stills" },
-  { to: "/about", label: "House Notes" },
-] as const;
+const NAV = [{ to: "/", label: "Home" }] as const;
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
