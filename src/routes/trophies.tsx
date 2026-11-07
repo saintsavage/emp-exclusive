@@ -129,6 +129,7 @@ const baseSteps: Step[] = [
   { id: "personality", title: "What should the brand feel like?", hint: "Choose as many as you like.", kind: "multi", options: ["Luxury", "Streetwear", "Minimalist", "Futuristic", "Corporate", "Creative", "Sporty", "Elegant", "Playful", "Bold", "Other"] },
   { id: "colours", title: "Which colours fit your vision?", hint: "Choose a palette or describe your own.", kind: "multi", options: ["Black and white", "Red and black", "Blue and silver", "Earth tones", "Pastels", "Monochrome", "Bright colours", "Other"] },
   { id: "deliverables", title: "What do you want us to create?", hint: "Select every end product you need. You can choose across different categories.", kind: "deliverables", required: true },
+  { id: "delivery", title: "How would you like to receive the work?", hint: "Choose what you need. Physical production is assessed separately.", kind: "multi", options: ["Digital design files", "Print-ready files", "Physical printed products", "Design and production assistance", "Not sure yet, recommend what I need"] },
 ];
 
 const contactSteps: Step[] = [
