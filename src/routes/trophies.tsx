@@ -193,7 +193,8 @@ function BrandBranchPage() {
   const [review, setReview] = useState(false);
   const [sending, setSending] = useState(false);
   const [submitError, setSubmitError] = useState("");
-  const [submitted, setSubmitted] = useState(false);\n  const [submissionNotice, setSubmissionNotice] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [submissionNotice, setSubmissionNotice] = useState("");
 
   const selected = (answers.deliverables as string[]) || [];
   const steps = useMemo(() => {
