@@ -17,7 +17,7 @@ import appCss from "../styles.css?url";
 const APP_NAME = "EMP Exclusive";
 const FALLBACK_ORIGIN = "https://emp-exclusive-e7cp.vercel.app";
 const SHARE_BLURB =
-  "EMP Exclusive — EMPIRE, from Francistown. The official house page. Stills, sessions, stories, and drops.";
+  "Your ambition. Your own identity. EMP Exclusive is an independent creative and technology ecosystem building brands, platforms and opportunities from Francistown, Botswana.";
 
 function shareOrigin() {
   return FALLBACK_ORIGIN;
@@ -39,12 +39,12 @@ export const Route = createRootRoute({
   beforeLoad: async () => ({ sessionUser: await fetchSessionUser() }),
   head: () => {
     const origin = shareOrigin();
-    const image = `${origin}/images/og.jpg`;
+    const image = `${origin}/og.jpg`;
     return {
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: APP_NAME },
+      { title: "EMP Exclusive | Your ambition. Your own identity." },
       { name: "description", content: SHARE_BLURB },
       { name: "theme-color", content: "#0a0a0b" },
       { name: "mobile-web-app-capable", content: "yes" },
@@ -52,7 +52,7 @@ export const Route = createRootRoute({
       { name: "apple-mobile-web-app-status-bar-style", content: "black" },
       { name: "apple-mobile-web-app-title", content: "EMP Exclusive" },
       { property: "og:site_name", content: APP_NAME },
-      { property: "og:title", content: APP_NAME },
+      { property: "og:title", content: "EMP Exclusive | Your ambition. Your own identity." },
       { property: "og:description", content: SHARE_BLURB },
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${origin}/` },
@@ -61,9 +61,9 @@ export const Route = createRootRoute({
       { property: "og:image:type", content: "image/jpeg" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
-      { property: "og:image:alt", content: "EMP Exclusive" },
+      { property: "og:image:alt", content: "EMP Exclusive. Your ambition. Your own identity." },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: APP_NAME },
+      { name: "twitter:title", content: "EMP Exclusive | Your ambition. Your own identity." },
       { name: "twitter:description", content: SHARE_BLURB },
       { name: "twitter:image", content: image },
     ],
