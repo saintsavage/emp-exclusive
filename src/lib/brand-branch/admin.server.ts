@@ -40,7 +40,7 @@ export async function requestAdminLink() {
   if (!apiKey || !fromEmail) throw new Error("Admin email delivery is not configured.");
 
   const origin = (process.env.BETTER_AUTH_URL || "https://www.empexclusive.company").replace(/\/$/, "");
-  const url = `${origin}/admin/verify?token=${token}`;
+  const url = `${origin}/admin?token=${token}`;
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
