@@ -39,7 +39,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       <div key={pathname} className="emp-page">{children}</div>
       <footer className="border-t border-line">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-8 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-display text-lg text-fg">EMP Exclusive</p>
+          <div><p className="font-display text-lg text-fg">EMP Exclusive</p><Link to="/services" className="mt-2 inline-flex text-xs text-muted underline decoration-white/20 underline-offset-4 hover:text-fg">Digital products & services ↗</Link></div>
           <p>EMPIRE · Francistown · Est. 19 Dec 2024</p>
         </div>
         <InstallHouse />
