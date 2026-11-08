@@ -65,6 +65,7 @@ export async function sendEmailDeliveryTest() {
   });
 
   if (!response.ok) {
-    throw new Error(`Unable to send test email (Resend HTTP ${response.status}).`);
+    const errorDetails = (await response.text()).slice(0, 1000);
+    throw new Error(`Unable to send test email (Resend HTTP ${response.status}): ${errorDetails}`);
   }
 }
