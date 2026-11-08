@@ -280,7 +280,8 @@ function BrandBranchPage() {
       <div className="mx-auto max-w-2xl border border-white/15 p-8 text-center sm:p-14">
         <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#e66a6a]">Brand Branch · Application received</p>
         <h1 className="mt-5 font-display text-5xl sm:text-7xl">Your idea is in.</h1>
-        <p className="mt-5 text-sm leading-7 text-white/65">Your application has been securely saved for EMP Exclusive. Our team will review the details and contact you using the phone number you provided.</p>\n        {submissionNotice ? <p className="mt-4 text-xs leading-6 text-[#f0aaaa]">{submissionNotice}</p> : null}
+        <p className="mt-5 text-sm leading-7 text-white/65">Your application has been securely saved for EMP Exclusive. Our team will review the details and contact you using the phone number you provided.</p>
+        {submissionNotice ? <p className="mt-4 text-xs leading-6 text-[#f0aaaa]">{submissionNotice}</p> : null}
         <p className="mt-4 text-xs leading-6 text-white/40">Submission does not guarantee acceptance or physical production. We'll confirm the scope and next steps with you.</p>
         <a href="/" className="mt-8 inline-flex min-h-12 items-center bg-white px-6 text-sm font-bold text-black">Return to EMP Exclusive ↗</a>
       </div>
