@@ -81,6 +81,25 @@ const sendBrandApplication = createServerFn({ method: "POST" })
       "This application is subject to review. Design and physical production are assessed separately.",
     ].filter(Boolean);
 
+    const { getSql } = await import("@/lib/db");
+    const sql = await getSql();
+    const stored = await sql.query<{ id: string }>(
+      `insert into brand_branch_applications
+        (brand_name, applicant_name, applicant_email, applicant_phone, answers, attachments)
+       values ($1, $2, $3, $4, $5::jsonb, $6::jsonb)
+       returning id`,
+      [
+        data.brandName,
+        data.fullName,
+        data.email.toLowerCase(),
+        data.phone,
+        JSON.stringify(data),
+        JSON.stringify(data.attachments),
+      ],
+    );
+    const applicationId = stored[0]?.id;
+    if (!applicationId) throw new Error("Your application could not be saved. Please try again.");
+
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
@@ -97,8 +116,7 @@ const sendBrandApplication = createServerFn({ method: "POST" })
         })),
       }),
     });
-    if (!response.ok) throw new Error("Your application could not be delivered. Please try WhatsApp instead.");
-    return { sent: true };
+    return { saved: true, notificationSent: response.ok, applicationId };
   });
 
 export const Route = createFileRoute("/trophies")({ component: BrandBranchPage });
@@ -175,7 +193,7 @@ function BrandBranchPage() {
   const [review, setReview] = useState(false);
   const [sending, setSending] = useState(false);
   const [submitError, setSubmitError] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState(false);\n  const [submissionNotice, setSubmissionNotice] = useState("");
 
   const selected = (answers.deliverables as string[]) || [];
   const steps = useMemo(() => {
@@ -222,7 +240,7 @@ function BrandBranchPage() {
     setSending(true);
     setSubmitError("");
     try {
-      await sendBrandApplication({ data: {
+      const result = await sendBrandApplication({ data: {
         brandName: String(answers.brandName || ""),
         purpose: String(answers.purpose || ""),
         inspiration: String(answers.inspiration || ""),
@@ -262,7 +280,7 @@ function BrandBranchPage() {
       <div className="mx-auto max-w-2xl border border-white/15 p-8 text-center sm:p-14">
         <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#e66a6a]">Brand Branch · Application received</p>
         <h1 className="mt-5 font-display text-5xl sm:text-7xl">Your idea is in.</h1>
-        <p className="mt-5 text-sm leading-7 text-white/65">Your application was delivered to EMP Exclusive. Our team will review the details and contact you using the phone number you provided.</p>
+        <p className="mt-5 text-sm leading-7 text-white/65">Your application has been securely saved for EMP Exclusive. Our team will review the details and contact you using the phone number you provided.</p>\n        {submissionNotice ? <p className="mt-4 text-xs leading-6 text-[#f0aaaa]">{submissionNotice}</p> : null}
         <p className="mt-4 text-xs leading-6 text-white/40">Submission does not guarantee acceptance or physical production. We'll confirm the scope and next steps with you.</p>
         <a href="/" className="mt-8 inline-flex min-h-12 items-center bg-white px-6 text-sm font-bold text-black">Return to EMP Exclusive ↗</a>
       </div>
