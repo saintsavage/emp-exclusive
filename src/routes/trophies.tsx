@@ -284,6 +284,7 @@ function BrandBranchPage() {
           <div className="mt-10 flex flex-wrap gap-3">
             <a href="#application" className="inline-flex min-h-12 items-center bg-white px-6 text-sm font-bold text-black transition hover:bg-[#e34242] hover:text-white">JOIN BRAND BRANCH <span className="ml-4">↘</span></a>
             <a href="#brand-lab" className="inline-flex min-h-12 items-center border border-white/35 px-6 text-sm font-semibold text-white transition hover:bg-white/10">Explore the brand lab</a>
+            <a href="/services#branding" className="inline-flex min-h-12 items-center border border-[#e34242]/60 px-6 text-sm font-semibold text-white transition hover:bg-[#e34242]">View branding prices & products ↗</a>
           </div>
           <div className="mt-16 grid max-w-2xl grid-cols-3 gap-4 border-t border-white/20 pt-5 text-[9px] font-bold uppercase tracking-[0.2em] text-white/45 sm:text-[10px]"><span>Ideas welcome</span><span>Culture first</span><span>Built together</span></div>
         </div>
