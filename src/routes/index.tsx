@@ -98,6 +98,10 @@ function Home() {
           <div className="space-y-6 text-base leading-8 text-muted sm:text-lg">
             <p>EMP Exclusive is a growing ecosystem shaped by technology, creativity and entrepreneurship. We turn ideas into useful platforms, independent brands and experiences that give people room to build and grow.</p>
             <p>We are not limited to one industry or one kind of project. The work takes different forms, but the purpose stays connected: make meaningful things, open doors and create value beyond ourselves.</p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <Link to="/services" className="inline-flex min-h-11 items-center bg-fg px-5 text-sm font-bold text-bg transition hover:bg-[#e34242] hover:text-white">Explore our digital products & services <span className="ml-3">↗</span></Link>
+              <Link to="/services#branding" className="inline-flex min-h-11 items-center border border-line px-5 text-sm font-semibold text-fg transition hover:border-[#e34242]">Explore branding & merchandise</Link>
+            </div>
             <div className="grid gap-6 border-t border-line pt-7 sm:grid-cols-2">
               <div><p className="text-[10px] font-bold uppercase tracking-[0.24em] text-muted">Our mission</p><p className="mt-3 text-sm leading-7 text-fg">Build useful ideas, develop skills and create opportunities people can actually use.</p></div>
               <div><p className="text-[10px] font-bold uppercase tracking-[0.24em] text-muted">Our vision</p><p className="mt-3 text-sm leading-7 text-fg">Grow a connected ecosystem where people, projects and independent ventures can thrive.</p></div>
