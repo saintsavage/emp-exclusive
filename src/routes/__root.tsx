@@ -68,9 +68,8 @@ export const Route = createRootRoute({
       { name: "twitter:image", content: image },
     ],
     links: [
-      { rel: "icon", type: "image/png", href: "/icon-192.png" },
-      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
-      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+      { rel: "shortcut icon", type: "image/svg+xml", href: "/favicon.svg" },
       {
         rel: "stylesheet",
         href: appCss,
