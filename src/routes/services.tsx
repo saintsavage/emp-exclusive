@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
@@ -283,7 +284,7 @@ function DigitalProductsPage() {
         </div>
       </section>
 
-      {selectedProduct ? (
+      {selectedProduct && typeof document !== "undefined" ? createPortal(
         <div className="fixed inset-0 z-[80] flex items-end justify-center bg-black/80 p-0 backdrop-blur-sm sm:items-center sm:p-5" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setSelectedProduct(null); }}>
           <section role="dialog" aria-modal="true" aria-labelledby="product-dialog-title" className="max-h-[92vh] w-full max-w-3xl overflow-y-auto border border-white/15 bg-[#101012] shadow-2xl sm:max-h-[88vh]">
             <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 sm:px-7">
@@ -339,7 +340,7 @@ function DigitalProductsPage() {
             </div>
           </section>
         </div>
-      ) : null}
+      , document.body) : null}
     </main>
   );
 }
