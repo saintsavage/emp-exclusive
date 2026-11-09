@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 const NAV = [
   { href: "/#about", label: "About" },
   { href: "/#projects", label: "Projects" },
-  { href: "/services", label: "Services" },
+  { href: "/services", label: "EMP Shop" },
   { href: "/#impact", label: "Impact" },
   { href: "/trophies", label: "Brand Branch" },
   { href: "/login", label: "EMP ID" },
@@ -42,7 +42,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           <div>
             <p className="font-display text-lg text-fg">EMP Exclusive</p>
             <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-muted">Ideas Into Impact.</p>
-            <Link to="/services" className="mt-2 inline-flex text-xs text-muted underline decoration-white/20 underline-offset-4 hover:text-fg">Services & products ↗</Link>
+            <Link to="/services" className="mt-2 inline-flex items-center gap-2 text-xs text-muted underline decoration-white/20 underline-offset-4 hover:text-fg"><EMPShopMark /> EMP Shop ↗</Link>
             <p className="mt-3 text-xs">EMPIRE · Francistown · Est. 19 Dec 2024</p>
           </div>
           <div>
@@ -101,6 +101,15 @@ function InstallHouse() {
 
 type BeforeInstallPromptEvent = Event & { prompt: () => Promise<void> };
 
+function EMPShopMark({ className = "size-5" }: { className?: string }) {
+  return <svg viewBox="0 0 48 48" aria-hidden="true" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M7 19 11 8h26l4 11" stroke="#C0C0C0" strokeWidth="2.5" strokeLinejoin="round"/>
+    <path d="M7 19h34v4c0 3-4 5-7 2-3 3-7 3-10 0-3 3-7 3-10 0-3 3-7 1-7-2v-4Z" fill="#C92535" stroke="#C0C0C0" strokeWidth="1.5" strokeLinejoin="round"/>
+    <path d="M11 27v13h26V27M19 40V30h10v10" stroke="#C0C0C0" strokeWidth="2.5" strokeLinejoin="round"/>
+    <path d="M17 8v11M31 8v11" stroke="#C0C0C0" strokeWidth="1.5"/>
+  </svg>;
+}
+
 function Header() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
@@ -118,7 +127,7 @@ function Header() {
               "relative flex h-11 items-center px-3 text-sm transition-colors duration-200",
               pathname === item.href || (item.href === "/trophies" && pathname === "/trophies") ? "text-fg" : "text-muted hover:text-fg",
             )}>
-              {item.label}
+              {item.label === "EMP Shop" ? <span className="flex items-center gap-2"><EMPShopMark />{item.label}</span> : item.label}
             </a>
           ))}
         </nav>
@@ -132,7 +141,7 @@ function Header() {
               <nav className="mt-8 flex flex-col gap-1">
                 {NAV.map((item) => (
                   <a key={item.href} href={item.href} onClick={() => setOpen(false)} className="flex h-12 items-center text-lg text-fg">
-                    {item.label}
+                    {item.label === "EMP Shop" ? <span className="flex items-center gap-3"><EMPShopMark className="size-6" />{item.label}</span> : item.label}
                   </a>
                 ))}
               </nav>
