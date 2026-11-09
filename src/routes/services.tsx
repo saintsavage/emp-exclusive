@@ -136,6 +136,32 @@ const packages = [
 
 const merchandise = ["Business cards", "T-shirts and hoodies", "Caps and uniforms", "Mugs and promotional items", "Pens and notebooks", "Stickers and labels", "Product packaging", "Shop signage and vehicle branding"];
 
+
+function getProductInfo(name: string, category: string) {
+  const item: Record<string, [string, string, string]> = {
+    "Online product catalogue": ["Still sending customers endless product photos one by one?", "Display products, prices and details in one easy-to-browse online catalogue.", "Less back-and-forth, easier browsing and more organised enquiries."],
+    "Professional business website": ["Ready for your business to look as established as it really is?", "Get a polished multi-page website built around your services, brand and customer journey.", "A stronger online presence that builds trust and brings in enquiries."],
+    "Website redesign": ["Your website is online, but it isn't doing your business any favours?", "Refresh the layout, mobile experience and customer journey.", "A sharper website that makes it easier for visitors to take action."],
+    "WhatsApp website integration": ["Make it easy for interested visitors to reach you immediately.", "Add a direct WhatsApp route from your website with a ready-to-send message.", "Fewer steps between discovering your business and starting a conversation."],
+    "Custom domain email setup": ["Still emailing customers from a generic personal address?", "Set up business email using your own domain.", "A more credible business identity every time you send a message."],
+    "Admin dashboard": ["Important business information should not be scattered everywhere.", "Bring key records, activity and management actions into one dashboard.", "A clearer view of operations and quicker everyday decisions."],
+    "Complete brand identity": ["Stop making every design look like it belongs to a different business.", "Create a coordinated identity with logo variations, colours, typography and branded materials.", "A recognisable visual system you can use consistently as you grow."],
+    "Business card design": ["Make sure people remember who to contact after you leave.", "Put your business name and contact details on a clear, professional card.", "A simple piece of branding people can keep and share."]
+  };
+  const copy: Record<string, [string, string, string]> = {
+    "Website development": ["Your business deserves to be easy to find and understand online.", name + " gives customers a clearer way to discover your offer and contact you.", "A more professional online presence that helps turn visitors into enquiries."],
+    "Forms and integrations": ["Stop losing time to scattered messages and repetitive admin.", name + " helps collect, organise or deliver customer information through your website.", "A smoother customer journey and less manual follow-up."],
+    "Business email systems": ["Your business communication should look professional and run smoothly.", name + " connects your email setup to the way your business communicates.", "More reliable communication and a more credible customer experience."],
+    "Anonymous messaging platforms": ["People need a simple, private way to share what they think.", name + " helps people submit feedback with a controlled review process.", "More accessible feedback and a clearer way to manage submissions."],
+    "Digital storefronts": ["Customers want to browse before they message you.", name + " makes it easier to present products and collect customer requests online.", "A shareable storefront that turns product interest into enquiries."],
+    "Custom digital solutions": ["Generic tools do not always fit the way your business works.", name + " is scoped around your workflow, users and required features.", "A digital solution designed around your operation."],
+    "Branding & design": ["People should recognise and remember your brand.", name + " gives your business a more consistent visual identity.", "Brand materials that help you look established wherever customers find you."],
+    "Branding packages": ["Give your business a consistent look from day one.", name + " combines useful brand essentials in one coordinated package.", "A recognisable foundation for your business or creator brand."]
+  };
+  const selected = item[name] || copy[category] || ["Your brand deserves to be seen beyond the screen.", "We prepare " + name.toLowerCase() + " around your brand, intended use and quantity.", "A consistent physical brand presence, with a quotation before production."];
+  return { problem: selected[0], solution: selected[1], result: selected[2] };
+}
+
 function DigitalProductsPage() {
   const [product, setProduct] = useState("");
   const [name, setName] = useState("");
@@ -146,10 +172,12 @@ function DigitalProductsPage() {
   const [status, setStatus] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<{ name: string; price: string; category: string } | null>(null);
   const [galleryIndex, setGalleryIndex] = useState(0);
+  const [infoTab, setInfoTab] = useState(0);
 
   const showProduct = (name: string, price: string, category: string) => {
     setSelectedProduct({ name, price, category });
     setGalleryIndex(0);
+    setInfoTab(0);
   };
 
   const request = (item: string) => {
@@ -326,11 +354,18 @@ function DigitalProductsPage() {
                 <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#e66a6a]">{selectedProduct.category}</p>
                 <h2 id="product-dialog-title" className="mt-3 font-display text-3xl leading-tight sm:text-4xl">{selectedProduct.name}</h2>
                 <p className="mt-3 text-2xl font-semibold">{selectedProduct.price}</p>
-                <p className="mt-4 text-sm leading-7 text-white/65">A practical solution designed around your business, your customers and the result you want to achieve. We agree on the scope before work begins.</p>
-                <div className="mt-6 space-y-5">
-                  <div><h3 className="text-xs font-bold uppercase tracking-wider text-white/85">What it helps you do</h3><p className="mt-2 text-sm leading-6 text-white/55">Present your business more professionally, make it easier for customers to take action and save time on everyday tasks.</p></div>
-                  <div><h3 className="text-xs font-bold uppercase tracking-wider text-white/85">What happens next</h3><p className="mt-2 text-sm leading-6 text-white/55">Tell us what you need. We'll confirm the features, timeline and final price before you commit.</p></div>
+                <p className="mt-4 text-base font-medium leading-7 text-white/85">{getProductInfo(selectedProduct.name, selectedProduct.category).problem}</p>
+                <div className="mt-6">
+                  <div className="grid grid-cols-3 gap-1 border-b border-white/10">
+                    {["Why you need it", "What you get", "The result"].map((label, index) => <button key={label} type="button" onClick={() => setInfoTab(index)} aria-pressed={infoTab === index} className={"border-b-2 px-1 py-3 text-[10px] font-bold transition-colors sm:text-xs " + (infoTab === index ? "border-[#d94350] text-white" : "border-transparent text-white/40 hover:text-white/75")}>{label}</button>)}
+                  </div>
+                  <div className="min-h-[132px] border-b border-white/10 py-5">
+                    {infoTab === 0 ? <><h3 className="text-xs font-bold uppercase tracking-wider text-white/85">The problem</h3><p className="mt-2 text-sm leading-7 text-white/60">{getProductInfo(selectedProduct.name, selectedProduct.category).problem}</p></> : null}
+                    {infoTab === 1 ? <><h3 className="text-xs font-bold uppercase tracking-wider text-white/85">What is included</h3><p className="mt-2 text-sm leading-7 text-white/60">{getProductInfo(selectedProduct.name, selectedProduct.category).solution}</p></> : null}
+                    {infoTab === 2 ? <><h3 className="text-xs font-bold uppercase tracking-wider text-white/85">What changes for you</h3><p className="mt-2 text-sm leading-7 text-white/60">{getProductInfo(selectedProduct.name, selectedProduct.category).result}</p></> : null}
+                  </div>
                 </div>
+                <p className="mt-4 text-xs leading-6 text-white/40">We confirm the exact scope, timeline and final price before you commit.</p>
                 <div className="mt-7 grid gap-2 sm:grid-cols-2">
                   <a href={"https://wa.me/?text=" + encodeURIComponent("Hi EMP Exclusive, I'm interested in " + selectedProduct.name + ". Please share more information and the next steps.")} target="_blank" rel="noreferrer" className="flex min-h-12 items-center justify-center bg-white px-4 text-xs font-bold text-black transition-colors hover:bg-[#e34242] hover:text-white">Enquire on WhatsApp ↗</a>
                   <a href={"mailto:empexclusive.planet@gmail.com?subject=" + encodeURIComponent("Enquiry: " + selectedProduct.name) + "&body=" + encodeURIComponent("Hi EMP Exclusive,\n\nI'm interested in " + selectedProduct.name + ". Please share more information and the next steps.\n\nThank you.")} className="flex min-h-12 items-center justify-center border border-white/25 px-4 text-xs font-bold hover:bg-white/10">Enquire by email ↗</a>
