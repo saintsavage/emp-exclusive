@@ -72,7 +72,7 @@ function Home() {
           <div className="mb-8 flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.32em] text-white/55">
             <span className="h-px w-9 bg-[#e34242]" /> Independent by nature · Francistown, Botswana
           </div>
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">Ideas don't build themselves.</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">Ideas Into Impact.</p>
           <h1 className="mt-4 max-w-4xl font-display text-6xl leading-[0.88] tracking-tight sm:text-8xl md:text-9xl">
             Make the idea<br /><span className="text-white/45">matter.</span>
           </h1>
