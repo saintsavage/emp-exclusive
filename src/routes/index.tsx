@@ -74,7 +74,7 @@ function Home() {
           </div>
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">Ideas Into Impact.</p>
           <h1 className="mt-4 max-w-4xl font-display text-6xl leading-[0.88] tracking-tight sm:text-8xl md:text-9xl">
-            Make the idea<br /><span className="text-white/45">matter.</span>
+            Make your next<br /><span className="text-white/45">move count.</span>
           </h1>
           <p className="mt-7 max-w-xl text-base leading-7 text-white/70 sm:text-lg sm:leading-8">
             We help businesses and creators look sharper, work smarter and get their ideas in front of more people. From branding to websites and custom digital tools, we turn good ideas into things people can use.
