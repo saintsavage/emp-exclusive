@@ -210,9 +210,9 @@ function DigitalProductsPage() {
     <main className="bg-[#09090b] text-white">
       <section className="border-b border-white/10 px-4 py-20 sm:py-28">
         <div className="mx-auto max-w-6xl">
-          <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#e66a6a]">EMP EXCLUSIVE · Make your next move count</p>
-          <h1 className="mt-5 max-w-4xl font-display text-5xl leading-[0.95] tracking-tight sm:text-7xl">Get noticed.<br /><span className="text-white/45">Work smarter. Grow.</span></h1>
-          <p className="mt-7 max-w-2xl text-base leading-8 text-white/65">Need a stronger brand, a website customers can find, or tools that save you time? Choose what you need and we'll help make it happen.</p>
+          <div className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.3em] text-[#e66a6a]"><EMPShopMark /> EMP SHOP · Make your next move count</div>
+          <h1 className="mt-5 max-w-4xl font-display text-5xl leading-[0.95] tracking-tight sm:text-7xl">EMP Shop.<br /><span className="text-white/45">Ideas into impact.</span></h1>
+          <p className="mt-7 max-w-2xl text-base leading-8 text-white/65">Find the tools, design and digital support your business needs to look sharper, work smarter and grow. Pick what moves you forward.</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a href="#digital" className="inline-flex min-h-12 items-center bg-white px-5 text-sm font-bold text-black hover:bg-[#e34242] hover:text-white">Explore digital solutions</a>
             <a href="#branding" className="inline-flex min-h-12 items-center border border-white/25 px-5 text-sm font-bold text-white hover:bg-white/10">Explore branding</a>
