@@ -143,8 +143,16 @@ function DigitalProductsPage() {
   const [details, setDetails] = useState("");
   const [sending, setSending] = useState(false);
   const [status, setStatus] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState<{ name: string; price: string; category: string } | null>(null);
+  const [galleryIndex, setGalleryIndex] = useState(0);
+
+  const showProduct = (name: string, price: string, category: string) => {
+    setSelectedProduct({ name, price, category });
+    setGalleryIndex(0);
+  };
 
   const request = (item: string) => {
+    setSelectedProduct(null);
     setProduct(item);
     setStatus("");
     document.getElementById("request")?.scrollIntoView({ behavior: "smooth" });
@@ -193,9 +201,12 @@ function DigitalProductsPage() {
               <p className="mt-2 text-sm leading-6 text-white/50">{group.note}</p>
               <div className="mt-6 divide-y divide-white/10">
                 {group.products.map(([label, price]) => (
-                  <div key={label} className="flex items-center justify-between gap-4 py-3">
+                  <div key={label} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
                     <div><p className="text-sm font-medium">{label}</p><p className="mt-1 text-xs text-white/45">{price}</p></div>
-                    <button type="button" onClick={() => request(label)} className="shrink-0 border border-white/20 px-3 py-2 text-xs font-bold hover:border-[#e34242] hover:bg-[#e34242]">Request ↗</button>
+                    <div className="flex items-center gap-2">
+                      <button type="button" onClick={() => showProduct(label, price, group.title)} className="border border-white/20 px-3 py-2 text-xs font-semibold text-white/75 transition-colors hover:border-white/50 hover:text-white">Tap for more information</button>
+                      <button type="button" onClick={() => request(label)} className="shrink-0 bg-white px-3 py-2 text-xs font-bold text-black transition-colors hover:bg-[#e34242] hover:text-white">Enquire ↗</button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -211,9 +222,11 @@ function DigitalProductsPage() {
           <p className="mt-4 max-w-2xl text-sm leading-7 text-white/55">Give people a reason to remember your business. We create logos and consistent brand identities that help you look professional wherever customers find you.</p>
           <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {branding.map(([label, price]) => (
-              <button key={label} type="button" onClick={() => request(label)} className="flex items-center justify-between gap-3 border border-white/10 bg-black/20 p-4 text-left hover:border-[#e34242]">
-                <span className="text-sm">{label}</span><span className="text-sm font-semibold text-white/70">{price}</span>
-              </button>
+              <article key={label} className="border border-white/10 bg-black/20 p-4 transition-colors hover:border-white/30">
+                <p className="text-sm font-medium">{label}</p>
+                <p className="mt-1 text-sm font-semibold text-white/60">{price}</p>
+                <button type="button" onClick={() => showProduct(label, price, "Branding & design")} className="mt-4 text-xs font-semibold text-white/65 underline decoration-white/20 underline-offset-4 hover:text-white">Tap for more information ↗</button>
+              </article>
             ))}
           </div>
           <div className="mt-12 grid gap-4 sm:grid-cols-2">
@@ -221,7 +234,10 @@ function DigitalProductsPage() {
               <article key={item.name} className="border border-white/10 p-6">
                 <div className="flex items-center justify-between gap-3"><h3 className="font-display text-2xl">{item.name}</h3><span className="text-xl font-semibold text-[#e66a6a]">{item.price}</span></div>
                 <ul className="mt-5 space-y-2 text-sm text-white/60">{item.items.map((line) => <li key={line}>• {line}</li>)}</ul>
-                <button type="button" onClick={() => request(item.name)} className="mt-6 border border-white/20 px-4 py-2 text-xs font-bold hover:border-[#e34242] hover:bg-[#e34242]">Request this package ↗</button>
+                <div className="mt-6 flex flex-wrap gap-2">
+                  <button type="button" onClick={() => showProduct(item.name, item.price, "Branding packages")} className="border border-white/20 px-4 py-2 text-xs font-semibold hover:border-white/50">Tap for more information</button>
+                  <button type="button" onClick={() => request(item.name)} className="bg-white px-4 py-2 text-xs font-bold text-black hover:bg-[#e34242] hover:text-white">Enquire ↗</button>
+                </div>
               </article>
             ))}
           </div>
@@ -236,7 +252,7 @@ function DigitalProductsPage() {
             <p className="mt-4 text-sm leading-7 text-white/55">Put your name on the things customers see, carry and use. We prepare the designs and can coordinate production where available. Ask us for a quote.</p>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            {merchandise.map((item) => <button key={item} type="button" onClick={() => request(item)} className="border border-white/10 bg-white/[0.025] p-4 text-left text-sm hover:border-[#e34242]">{item}<span className="mt-2 block text-xs text-white/40">Request a quote ↗</span></button>)}
+            {merchandise.map((item) => <article key={item} className="border border-white/10 bg-white/[0.025] p-4 text-left text-sm transition-colors hover:border-white/30">{item}<span className="mt-2 block text-xs text-white/40">Made to order · Request a quote</span><button type="button" onClick={() => showProduct(item, "Request a quote", "Physical branding")} className="mt-4 text-xs font-semibold text-white/70 underline decoration-white/20 underline-offset-4 hover:text-white">Tap for more information ↗</button></article>)}
           </div>
         </div>
       </section>
@@ -266,6 +282,64 @@ function DigitalProductsPage() {
           </form>
         </div>
       </section>
+
+      {selectedProduct ? (
+        <div className="fixed inset-0 z-[80] flex items-end justify-center bg-black/80 p-0 backdrop-blur-sm sm:items-center sm:p-5" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setSelectedProduct(null); }}>
+          <section role="dialog" aria-modal="true" aria-labelledby="product-dialog-title" className="max-h-[92vh] w-full max-w-3xl overflow-y-auto border border-white/15 bg-[#101012] shadow-2xl sm:max-h-[88vh]">
+            <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 sm:px-7">
+              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-white/45">EMP Exclusive · Product details</p>
+              <button type="button" onClick={() => setSelectedProduct(null)} aria-label="Close product information" className="flex size-9 items-center justify-center border border-white/15 text-xl text-white/70 hover:bg-white hover:text-black">×</button>
+            </div>
+            <div className="grid gap-7 p-5 sm:p-7 md:grid-cols-[0.95fr_1.05fr]">
+              <div>
+                <div className="relative flex min-h-[250px] items-center justify-center overflow-hidden border border-white/10 bg-[radial-gradient(ellipse_at_50%_20%,rgba(255,255,255,0.13),transparent_65%),linear-gradient(145deg,#242427,#09090b)] p-5">
+                  {galleryIndex === 0 ? (
+                    <div className="w-full max-w-[270px] border border-white/20 bg-[#09090b] p-5 shadow-2xl">
+                      <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-white/40">EMP / {selectedProduct.category}</p>
+                      <p className="mt-7 font-display text-4xl leading-none">{selectedProduct.name}</p>
+                      <div className="mt-7 h-px bg-white/30" />
+                      <p className="mt-3 text-[10px] uppercase tracking-[0.2em] text-white/55">Ideas Into Impact.</p>
+                    </div>
+                  ) : galleryIndex === 1 ? (
+                    <div className="w-full max-w-[270px] space-y-3 border border-white/15 bg-[#151518] p-4 shadow-2xl">
+                      <div className="flex items-center justify-between"><span className="text-[9px] uppercase tracking-widest text-white/45">Your business</span><span className="size-2 rounded-full bg-emerald-400" /></div>
+                      <div className="h-3 w-2/3 bg-white/80" /><div className="h-2 w-full bg-white/15" /><div className="h-2 w-4/5 bg-white/15" />
+                      <div className="grid grid-cols-2 gap-2 pt-3"><div className="h-16 border border-white/10 bg-white/5" /><div className="h-16 border border-white/10 bg-white/5" /></div>
+                      <div className="h-8 w-1/2 bg-white" />
+                    </div>
+                  ) : (
+                    <div className="w-full max-w-[270px] border border-white/15 bg-[#171719] p-5 shadow-2xl">
+                      <div className="flex items-center gap-2"><span className="size-7 rounded-full border border-white/40" /><span className="h-2 w-24 bg-white/50" /></div>
+                      <div className="mt-5 h-24 border border-white/10 bg-white/5" />
+                      <div className="mt-4 h-2 w-full bg-white/20" /><div className="mt-2 h-2 w-3/4 bg-white/20" />
+                      <div className="mt-5 h-8 w-full border border-white/30" />
+                    </div>
+                  )}
+                </div>
+                <div className="mt-3 grid grid-cols-3 gap-2">
+                  {["Brand view", "Web view", "Details view"].map((label, index) => <button key={label} type="button" onClick={() => setGalleryIndex(index)} aria-pressed={galleryIndex === index} className={"border px-2 py-3 text-[10px] transition-colors " + (galleryIndex === index ? "border-white bg-white text-black" : "border-white/15 text-white/55 hover:border-white/40")}>{label}</button>)}
+                </div>
+                <p className="mt-2 text-[10px] leading-5 text-white/35">Illustrative previews. Final design and features are tailored to your brief.</p>
+              </div>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#e66a6a]">{selectedProduct.category}</p>
+                <h2 id="product-dialog-title" className="mt-3 font-display text-3xl leading-tight sm:text-4xl">{selectedProduct.name}</h2>
+                <p className="mt-3 text-2xl font-semibold">{selectedProduct.price}</p>
+                <p className="mt-4 text-sm leading-7 text-white/65">A practical solution designed around your business, your customers and the result you want to achieve. We agree on the scope before work begins.</p>
+                <div className="mt-6 space-y-5">
+                  <div><h3 className="text-xs font-bold uppercase tracking-wider text-white/85">What it helps you do</h3><p className="mt-2 text-sm leading-6 text-white/55">Present your business more professionally, make it easier for customers to take action and save time on everyday tasks.</p></div>
+                  <div><h3 className="text-xs font-bold uppercase tracking-wider text-white/85">What happens next</h3><p className="mt-2 text-sm leading-6 text-white/55">Tell us what you need. We'll confirm the features, timeline and final price before you commit.</p></div>
+                </div>
+                <div className="mt-7 grid gap-2 sm:grid-cols-2">
+                  <a href={"https://wa.me/?text=" + encodeURIComponent("Hi EMP Exclusive, I'm interested in " + selectedProduct.name + ". Please share more information and the next steps.")} target="_blank" rel="noreferrer" className="flex min-h-12 items-center justify-center bg-white px-4 text-xs font-bold text-black transition-colors hover:bg-[#e34242] hover:text-white">Enquire on WhatsApp ↗</a>
+                  <a href={"mailto:empexclusive.planet@gmail.com?subject=" + encodeURIComponent("Enquiry: " + selectedProduct.name) + "&body=" + encodeURIComponent("Hi EMP Exclusive,\n\nI'm interested in " + selectedProduct.name + ". Please share more information and the next steps.\n\nThank you.")} className="flex min-h-12 items-center justify-center border border-white/25 px-4 text-xs font-bold hover:bg-white/10">Enquire by email ↗</a>
+                </div>
+                <button type="button" onClick={() => request(selectedProduct.name)} className="mt-3 min-h-12 w-full border border-white/10 px-4 text-xs font-semibold text-white/65 hover:border-white/40 hover:text-white">Send a detailed request ↓</button>
+              </div>
+            </div>
+          </section>
+        </div>
+      ) : null}
     </main>
   );
 }
