@@ -6,21 +6,20 @@ export const Route = createFileRoute("/about")({ component: AboutPage });
 function AboutPage() {
   return (
     <main className="mx-auto max-w-3xl px-4 py-12">
-      <p className="text-xs tracking-[0.28em] text-muted uppercase">The house</p>
+      <p className="text-xs tracking-[0.28em] text-muted uppercase">Who we are</p>
       <h1 className="mt-2 font-display text-5xl leading-none tracking-tight text-balance">About EMP</h1>
       <p className="mt-3 max-w-xl text-pretty text-muted">
-        EMP Exclusive is an independent creative and technology ecosystem from {HOUSE.city}, {HOUSE.country}.
+        Creative work and practical technology from {HOUSE.city}, {HOUSE.country}.
       </p>
       <article className="mt-12 space-y-5 text-pretty text-lg leading-8 text-fg/90">
         <p>
-          EMP Exclusive is EMPIRE: a growing house for technology, creativity,
-          entrepreneurship and independent ventures. We turn ideas into useful
-          platforms, build brands and create room for people to develop their work.
+          EMP Exclusive helps businesses, creators and organisations turn ideas into
+          things people can see, use and remember.
         </p>
         <p>
-          The ecosystem is not limited to one industry. Projects may take different
-          forms, but they share a common purpose: make meaningful things, open doors
-          and create value beyond ourselves.
+          We create brands, websites, digital tools and merchandise. Whether you are
+          starting small or ready for your next step, we focus on making the result
+          useful, clear and built around what you need.
         </p>
       </article>
       <article className="mt-14 rounded-xl bg-surface px-6 py-10 shadow-[var(--shadow-border)] sm:px-10">
@@ -42,12 +41,12 @@ function AboutPage() {
           <dd className="mt-2 font-display text-3xl">{HOUSE.city}</dd>
         </div>
         <div className="rounded-xl bg-surface p-5 shadow-[var(--shadow-border)]">
-          <dt className="text-xs tracking-[0.22em] text-subtle uppercase">Focus</dt>
-          <dd className="mt-2 font-display text-2xl">Technology · Creativity · Opportunity</dd>
+          <dt className="text-xs tracking-[0.22em] text-subtle uppercase">What we do</dt>
+          <dd className="mt-2 font-display text-2xl">Brands · Websites · Digital tools</dd>
         </div>
         <div className="rounded-xl bg-surface p-5 shadow-[var(--shadow-border)]">
-          <dt className="text-xs tracking-[0.22em] text-subtle uppercase">Next</dt>
-          <dd className="mt-2 font-display text-3xl">The rise</dd>
+          <dt className="text-xs tracking-[0.22em] text-subtle uppercase">Our promise</dt>
+          <dd className="mt-2 font-display text-3xl">Ideas into impact</dd>
         </div>
       </dl>
     </main>
