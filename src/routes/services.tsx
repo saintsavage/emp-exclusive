@@ -162,6 +162,15 @@ function getProductInfo(name: string, category: string) {
   return { problem: selected[0], solution: selected[1], result: selected[2] };
 }
 
+function EMPShopMark({ className = "size-8" }: { className?: string }) {
+  return <svg viewBox="0 0 48 48" aria-hidden="true" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M7 19 11 8h26l4 11" stroke="#C0C0C0" strokeWidth="2.5" strokeLinejoin="round"/>
+    <path d="M7 19h34v4c0 3-4 5-7 2-3 3-7 3-10 0-3 3-7 3-10 0-3 3-7 1-7-2v-4Z" fill="#C92535" stroke="#C0C0C0" strokeWidth="1.5" strokeLinejoin="round"/>
+    <path d="M11 27v13h26V27M19 40V30h10v10" stroke="#C0C0C0" strokeWidth="2.5" strokeLinejoin="round"/>
+    <path d="M17 8v11M31 8v11" stroke="#C0C0C0" strokeWidth="1.5"/>
+  </svg>;
+}
+
 function DigitalProductsPage() {
   const [product, setProduct] = useState("");
   const [name, setName] = useState("");
