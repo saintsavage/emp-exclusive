@@ -27,9 +27,9 @@ const sendContactEmail = createServerFn({ method: "POST" })
 export const Route = createFileRoute("/")({ component: Home });
 
 const projects = [
-  { number: "01", name: "EMP HQ", category: "Internal infrastructure", status: "RESTRICTED AREA", description: "The private command centre for the EMP ecosystem. Operations, administration and project oversight stay behind a protected door.", tag: "THE ENGINE", dark: true },
-  { number: "02", name: "EMP ID", category: "Identity infrastructure", status: "IN DEVELOPMENT", description: "One digital identity designed to connect participating websites and apps across the ecosystem.", tag: "ONE IDENTITY", dark: false },
-  { number: "03", name: "HandOn", category: "Service marketplace", status: "IN DEVELOPMENT", collaboration: "In collaboration with Ahmed Ali", description: "A Botswana-first marketplace connecting people who need a service with people ready to provide it. Starting in Francistown.", tag: "LOCAL OPPORTUNITY", dark: false },
+  { number: "01", name: "EMP HQ", category: "Internal infrastructure", status: "RESTRICTED AREA", description: "EMP's private operations dashboard for managing projects and internal work.", tag: "THE ENGINE", dark: true },
+  { number: "02", name: "EMP ID", category: "Identity infrastructure", status: "IN DEVELOPMENT", description: "One sign-in designed to make access across participating EMP websites and apps simpler.", tag: "ONE IDENTITY", dark: false },
+  { number: "03", name: "HandOn", category: "Service marketplace", status: "IN DEVELOPMENT", collaboration: "In collaboration with Ahmed Ali", description: "Find local services or offer your skills. HandOn is starting in Francistown.", tag: "LOCAL OPPORTUNITY", dark: false },
   { number: "04", name: "SAYNT AI", category: "Personal technology", status: "IN DEVELOPMENT", description: "A hands-free Android assistant built around voice interaction and everyday commands.", tag: "TECH, REIMAGINED", dark: true },
 ] as const;
 
@@ -77,10 +77,10 @@ function Home() {
             Make the idea<br /><span className="text-white/45">matter.</span>
           </h1>
           <p className="mt-7 max-w-xl text-base leading-7 text-white/70 sm:text-lg sm:leading-8">
-            EMP Exclusive is an independent creative and technology ecosystem building platforms, brands and opportunities with purpose.
+            We help businesses and creators look sharper, work smarter and get their ideas in front of more people. From branding to websites and custom digital tools, we turn good ideas into things people can use.
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
-            <a href="#projects" className="inline-flex min-h-12 items-center bg-white px-6 text-sm font-bold text-black transition hover:bg-[#e34242] hover:text-white">Explore the ecosystem <span className="ml-4">↗</span></a>
+            <a href="#projects" className="inline-flex min-h-12 items-center bg-white px-6 text-sm font-bold text-black transition hover:bg-[#e34242] hover:text-white">Explore what we do <span className="ml-4">↗</span></a>
             <a href="#about" className="inline-flex min-h-12 items-center border border-white/35 px-6 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10">Who we are</a>
           </div>
           <div className="mt-16 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-white/20 pt-5 text-[10px] font-semibold uppercase tracking-[0.24em] text-white/45">
@@ -93,18 +93,18 @@ function Home() {
         <div className="grid gap-10 md:grid-cols-[0.78fr_1.22fr] md:gap-20">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.28em] text-muted">01 / The thinking</p>
-            <h2 className="mt-4 max-w-sm font-display text-4xl leading-[1.02] tracking-tight sm:text-6xl">Built for people who make things happen.</h2>
+            <h2 className="mt-4 max-w-sm font-display text-4xl leading-[1.02] tracking-tight sm:text-6xl">Good ideas deserve great execution.</h2>
           </div>
           <div className="space-y-6 text-base leading-8 text-muted sm:text-lg">
-            <p>EMP Exclusive is a growing ecosystem shaped by technology, creativity and entrepreneurship. We turn ideas into useful platforms, independent brands and experiences that give people room to build and grow.</p>
-            <p>We are not limited to one industry or one kind of project. The work takes different forms, but the purpose stays connected: make meaningful things, open doors and create value beyond ourselves.</p>
+            <p>We help people and businesses bring their ideas to life. That means memorable brands, useful websites and digital tools that make everyday work easier.</p>
+            <p>Whether you're starting small or ready to grow, we'll help you turn your next idea into something real.</p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Link to="/services" className="inline-flex min-h-11 items-center bg-fg px-5 text-sm font-bold text-bg transition hover:bg-[#e34242] hover:text-white">Explore our digital products & services <span className="ml-3">↗</span></Link>
               <Link to="/services#branding" className="inline-flex min-h-11 items-center border border-line px-5 text-sm font-semibold text-fg transition hover:border-[#e34242]">Explore branding & merchandise</Link>
             </div>
             <div className="grid gap-6 border-t border-line pt-7 sm:grid-cols-2">
               <div><p className="text-[10px] font-bold uppercase tracking-[0.24em] text-muted">Our mission</p><p className="mt-3 text-sm leading-7 text-fg">Build useful ideas, develop skills and create opportunities people can actually use.</p></div>
-              <div><p className="text-[10px] font-bold uppercase tracking-[0.24em] text-muted">Our vision</p><p className="mt-3 text-sm leading-7 text-fg">Grow a connected ecosystem where people, projects and independent ventures can thrive.</p></div>
+              <div><p className="text-[10px] font-bold uppercase tracking-[0.24em] text-muted">Our vision</p><p className="mt-3 text-sm leading-7 text-fg">Help more people turn good ideas into useful products, stronger brands and new opportunities.</p></div>
             </div>
           </div>
         </div>
@@ -114,7 +114,7 @@ function Home() {
         <div className="mx-auto max-w-6xl px-4">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div><p className="text-xs font-bold uppercase tracking-[0.28em] text-white/45">02 / What we're building</p><h2 className="mt-4 font-display text-4xl tracking-tight sm:text-6xl">Different ideas.<br />Shared ambition.</h2></div>
-            <p className="max-w-sm text-sm leading-7 text-white/55">A look inside the ecosystem. Each project has its own purpose, its own people and its own road ahead.</p>
+            <p className="max-w-sm text-sm leading-7 text-white/55">Meet the projects we're building. Each one solves a different problem and has a clear purpose.</p>
           </div>
           <div className="mt-12 grid gap-3 sm:grid-cols-2">
             {projects.map((project) => (
@@ -136,8 +136,8 @@ function Home() {
       <section id="impact" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-20 sm:py-28">
         <p className="text-xs font-bold uppercase tracking-[0.28em] text-muted">03 / Why it matters</p>
         <div className="mt-4 grid gap-10 md:grid-cols-[1fr_0.85fr] md:items-end">
-          <h2 className="max-w-2xl font-display text-4xl leading-[1.02] tracking-tight sm:text-6xl">Progress means more when it reaches people.</h2>
-          <p className="text-base leading-8 text-muted">Our work focuses on practical outcomes: making services easier to find, lowering barriers to digital participation, supporting independent creators and giving new ideas a place to grow.</p>
+          <h2 className="max-w-2xl font-display text-4xl leading-[1.02] tracking-tight sm:text-6xl">Make useful things. Create real value.</h2>
+          <p className="text-base leading-8 text-muted">We focus on results people can feel: easier access to services, better ways to work, stronger brands and more room for good ideas to grow.</p>
         </div>
         <div className="mt-12 grid gap-0 border-y border-line sm:grid-cols-3">
           {[["01", "Access", "Connect people to useful tools, technology and support."], ["02", "Opportunity", "Help people offer skills, find work and build something of their own."], ["03", "Creativity", "Make room for original ideas, independent brands and expression."]].map(([n, title, body]) => (
@@ -150,7 +150,7 @@ function Home() {
         <div className="absolute -right-20 top-1/2 size-80 -translate-y-1/2 rounded-full border border-white/10 sm:size-[34rem]" />
         <div className="absolute -right-8 top-1/2 size-56 -translate-y-1/2 rounded-full border border-[#d94a4a]/35 sm:size-[26rem]" />
         <div className="relative mx-auto grid max-w-6xl gap-8 px-4 py-16 sm:grid-cols-[1fr_auto] sm:items-center sm:py-24">
-          <div className="flex items-center gap-6"><BrandBranchLogo /><div><p className="text-xs font-bold uppercase tracking-[0.28em] text-white/45">04 / Brand Branch</p><h2 className="mt-4 max-w-2xl font-display text-4xl leading-tight tracking-tight sm:text-6xl">Your idea deserves a name of its own.</h2><p className="mt-5 max-w-2xl text-sm leading-7 text-white/60">A youth-focused launchpad for ambitious creators building their own brands, communities and creative identities. Start with an idea. Give it a direction. Make it real.</p></div></div>
+          <div className="flex items-center gap-6"><BrandBranchLogo /><div><p className="text-xs font-bold uppercase tracking-[0.28em] text-white/45">04 / Brand Branch</p><h2 className="mt-4 max-w-2xl font-display text-4xl leading-tight tracking-tight sm:text-6xl">Your idea deserves a name of its own.</h2><p className="mt-5 max-w-2xl text-sm leading-7 text-white/60">Got a brand idea? We'll help you shape its identity, build its look and put it in front of the right people.</p></div></div>
           <Link to="/trophies" className="inline-flex min-h-12 items-center justify-center bg-white px-6 text-sm font-bold text-black transition hover:bg-[#e34242] hover:text-white">Explore Brand Branch <span className="ml-4">↗</span></Link>
         </div>
       </section>
@@ -158,8 +158,8 @@ function Home() {
       <section id="involved" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-20 sm:py-28">
         <p className="text-xs font-bold uppercase tracking-[0.28em] text-muted">05 / Get involved</p>
         <div className="mt-4 grid gap-8 md:grid-cols-[1fr_0.8fr] md:items-end">
-          <h2 className="max-w-2xl font-display text-4xl leading-[1.02] tracking-tight sm:text-6xl">Bring an idea.<br />Build something real.</h2>
-          <p className="text-base leading-8 text-muted">EMP grows through people with ideas, skills and the determination to make them happen. We believe good work gets better when the right people build together.</p>
+          <h2 className="max-w-2xl font-display text-4xl leading-[1.02] tracking-tight sm:text-6xl">Got something in mind?<br />Let's make it happen.</h2>
+          <p className="text-base leading-8 text-muted">Tell us what you're trying to achieve. We'll help you find the right service, plan the next step and bring your idea to life.</p>
         </div>
 
         <div className="mt-12 grid gap-8 border-t border-line pt-9 md:grid-cols-[1.1fr_0.9fr]">
