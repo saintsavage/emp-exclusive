@@ -41,6 +41,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
         <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 text-sm text-muted sm:grid-cols-[1fr_1fr_auto] sm:items-start">
           <div>
             <p className="font-display text-lg text-fg">EMP Exclusive</p>
+            <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-muted">Ideas Into Impact.</p>
             <Link to="/services" className="mt-2 inline-flex text-xs text-muted underline decoration-white/20 underline-offset-4 hover:text-fg">Digital products & services ↗</Link>
             <p className="mt-3 text-xs">EMPIRE · Francistown · Est. 19 Dec 2024</p>
           </div>
