@@ -267,6 +267,15 @@ function Home() {
                 <a href="tel:+26777506421" className="text-sm font-bold text-fg hover:underline">Call ↗</a>
               </div>
             </div>
+            <div className="border border-line p-6">
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-muted">Operating hours</p>
+              <dl className="mt-4 space-y-3 text-sm">
+                <div className="flex items-center justify-between gap-4"><dt className="text-muted">Monday – Friday</dt><dd className="font-semibold text-fg">08:00 – 17:00</dd></div>
+                <div className="flex items-center justify-between gap-4"><dt className="text-muted">Saturday</dt><dd className="font-semibold text-fg">08:00 – 18:00</dd></div>
+                <div className="flex items-center justify-between gap-4"><dt className="text-muted">Sunday</dt><dd className="font-semibold text-fg">09:00 – 16:00</dd></div>
+              </dl>
+              <p className="mt-4 text-xs leading-5 text-muted">Botswana time (CAT). WhatsApp messages can still be sent outside these hours.</p>
+            </div>
           </div>
         </div>
 
