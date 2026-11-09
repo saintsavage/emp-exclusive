@@ -38,9 +38,22 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       <Header />
       <div key={pathname} className="emp-page">{children}</div>
       <footer className="border-t border-line">
-        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-8 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
-          <div><p className="font-display text-lg text-fg">EMP Exclusive</p><Link to="/services" className="mt-2 inline-flex text-xs text-muted underline decoration-white/20 underline-offset-4 hover:text-fg">Digital products & services ↗</Link></div>
-          <p>EMPIRE · Francistown · Est. 19 Dec 2024</p>
+        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 text-sm text-muted sm:grid-cols-[1fr_1fr_auto] sm:items-start">
+          <div>
+            <p className="font-display text-lg text-fg">EMP Exclusive</p>
+            <Link to="/services" className="mt-2 inline-flex text-xs text-muted underline decoration-white/20 underline-offset-4 hover:text-fg">Digital products & services ↗</Link>
+            <p className="mt-3 text-xs">EMPIRE · Francistown · Est. 19 Dec 2024</p>
+          </div>
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-fg">Operating hours</p>
+            <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-5 gap-y-2 text-xs">
+              <dt>Monday–Friday</dt><dd>08:00–17:00</dd>
+              <dt>Saturday</dt><dd>08:00–18:00</dd>
+              <dt>Sunday</dt><dd>09:00–16:00</dd>
+            </dl>
+            <p className="mt-3 text-[11px] text-muted/70">Botswana time (CAT)</p>
+          </div>
+          <p className="text-xs sm:text-right">We look forward to hearing from you.</p>
         </div>
         <InstallHouse />
       </footer>
