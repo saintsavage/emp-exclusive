@@ -173,9 +173,9 @@ function DigitalProductsPage() {
     <main className="bg-[#09090b] text-white">
       <section className="border-b border-white/10 px-4 py-20 sm:py-28">
         <div className="mx-auto max-w-6xl">
-          <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#e66a6a]">EMP Exclusive · Digital products & creative solutions</p>
-          <h1 className="mt-5 max-w-4xl font-display text-5xl leading-[0.95] tracking-tight sm:text-7xl">Ideas into things<br /><span className="text-white/45">people can use.</span></h1>
-          <p className="mt-7 max-w-2xl text-base leading-8 text-white/65">Explore our website, platform, business email, branding and merchandise services. Choose what you need, send an enquiry and we'll come back with availability, a final quotation and next steps.</p>
+          <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#e66a6a]">EMP EXCLUSIVE · Make your next move count</p>
+          <h1 className="mt-5 max-w-4xl font-display text-5xl leading-[0.95] tracking-tight sm:text-7xl">Get noticed.<br /><span className="text-white/45">Work smarter. Grow.</span></h1>
+          <p className="mt-7 max-w-2xl text-base leading-8 text-white/65">Need a stronger brand, a website customers can find, or tools that save you time? Choose what you need and we'll help make it happen.</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a href="#digital" className="inline-flex min-h-12 items-center bg-white px-5 text-sm font-bold text-black hover:bg-[#e34242] hover:text-white">Explore digital solutions</a>
             <a href="#branding" className="inline-flex min-h-12 items-center border border-white/25 px-5 text-sm font-bold text-white hover:bg-white/10">Explore branding</a>
@@ -185,7 +185,7 @@ function DigitalProductsPage() {
       </section>
 
       <section id="digital" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-16 sm:py-24">
-        <div className="mb-10"><p className="text-xs font-bold uppercase tracking-[0.25em] text-white/40">01 / Digital solutions</p><h2 className="mt-3 font-display text-4xl sm:text-5xl">Built for real work.</h2></div>
+        <div className="mb-10"><p className="text-xs font-bold uppercase tracking-[0.25em] text-white/40">01 / Digital solutions</p><h2 className="mt-3 font-display text-4xl sm:text-5xl">Less busywork. More progress.</h2></div>
         <div className="grid gap-5 md:grid-cols-2">
           {groups.map((group) => (
             <article key={group.title} className="border border-white/10 bg-white/[0.025] p-6 sm:p-7">
@@ -207,8 +207,8 @@ function DigitalProductsPage() {
       <section id="branding" className="border-y border-white/10 bg-[#111113] px-4 py-16 sm:py-24">
         <div className="mx-auto max-w-6xl">
           <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#e66a6a]">02 / Branding & design</p>
-          <h2 className="mt-3 font-display text-4xl sm:text-5xl">Build a brand people recognise.</h2>
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-white/55">From a first logo to a complete identity, EMP helps creators, teenagers and growing businesses bring their brands together.</p>
+          <h2 className="mt-3 font-display text-4xl sm:text-5xl">Look like the business you're building.</h2>
+          <p className="mt-4 max-w-2xl text-sm leading-7 text-white/55">Give people a reason to remember your business. We create logos and consistent brand identities that help you look professional wherever customers find you.</p>
           <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {branding.map(([label, price]) => (
               <button key={label} type="button" onClick={() => request(label)} className="flex items-center justify-between gap-3 border border-white/10 bg-black/20 p-4 text-left hover:border-[#e34242]">
@@ -232,8 +232,8 @@ function DigitalProductsPage() {
         <div className="grid gap-8 md:grid-cols-[1fr_1fr]">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.25em] text-white/40">03 / Physical branding</p>
-            <h2 className="mt-3 font-display text-4xl sm:text-5xl">Make the brand tangible.</h2>
-            <p className="mt-4 text-sm leading-7 text-white/55">We create the artwork, coordinate production and arrange delivery where available. Physical product pricing is quoted individually based on quantity, materials, print method and destination.</p>
+            <h2 className="mt-3 font-display text-4xl sm:text-5xl">Take your brand beyond the screen.</h2>
+            <p className="mt-4 text-sm leading-7 text-white/55">Put your name on the things customers see, carry and use. We prepare the designs and can coordinate production where available. Ask us for a quote.</p>
           </div>
           <div className="grid grid-cols-2 gap-3">
             {merchandise.map((item) => <button key={item} type="button" onClick={() => request(item)} className="border border-white/10 bg-white/[0.025] p-4 text-left text-sm hover:border-[#e34242]">{item}<span className="mt-2 block text-xs text-white/40">Request a quote ↗</span></button>)}
