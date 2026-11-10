@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 const NAV = [
   { href: "/#about", label: "About" },
   { href: "/#projects", label: "Projects" },
-  { href: "/services", label: "Services" },
+  { href: "/services", label: "EMP SHOP" },
   { href: "/#impact", label: "Impact" },
   { href: "/trophies", label: "Brand Branch" },
   { href: "/login", label: "EMP ID" },
@@ -42,7 +42,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           <div>
             <p className="font-display text-lg text-fg">EMP Exclusive</p>
             <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-muted">Ideas Into Impact.</p>
-            <Link to="/services" className="mt-2 inline-flex text-xs text-muted underline decoration-white/20 underline-offset-4 hover:text-fg">Services & products ↗</Link>
+            <Link to="/services" className="mt-2 inline-flex text-xs text-muted underline decoration-white/20 underline-offset-4 hover:text-fg">EMP SHOP ↗</Link>
             <p className="mt-3 text-xs">EMPIRE · Francistown · Est. 19 Dec 2024</p>
           </div>
           <div>
