@@ -207,6 +207,30 @@ function DigitalProductsPage() {
         </div>
       </section>
 
+      <section aria-labelledby="departments-title" className="mx-auto max-w-7xl px-4 py-14 sm:px-8 sm:py-20">
+        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div><p className="text-[10px] font-bold uppercase tracking-[0.28em] text-[#e66a73]">Shop by department</p><h2 id="departments-title" className="mt-3 font-display text-4xl tracking-tight sm:text-5xl">Three collections. One EMP.</h2></div>
+          <p className="max-w-md text-sm leading-7 text-white/50">Explore each collection on its own, from digital builds to creative services and physical products.</p>
+        </div>
+        <div className="grid gap-4 lg:grid-cols-3">
+          <button type="button" onClick={() => { setActiveCategory("Digital solutions"); document.getElementById("catalogue")?.scrollIntoView({ behavior: "smooth" }); }} className="group relative min-h-[260px] overflow-hidden border border-white/15 bg-[#111113] p-6 text-left transition hover:-translate-y-1 hover:border-[#d32632]/70 sm:p-8">
+            <span className="text-[10px] font-bold tracking-[0.24em] text-[#f06a73]">CATALOGUE 01 / DIGITAL</span><span className="absolute right-6 top-6 text-4xl text-white/15">01</span>
+            <div className="mt-12"><h3 className="max-w-xs font-display text-3xl leading-tight sm:text-4xl">Digital Development &amp; Business Solutions</h3><p className="mt-4 max-w-sm text-sm leading-6 text-white/50">Websites, e-commerce, custom platforms, business systems, forms and email integrations.</p></div>
+            <span className="mt-7 inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.16em] text-white">Explore digital solutions <span className="text-[#f06a73] transition group-hover:translate-x-1">↗</span></span>
+          </button>
+          <button type="button" onClick={() => { setActiveCategory("Creative studio"); document.getElementById("catalogue")?.scrollIntoView({ behavior: "smooth" }); }} className="group relative min-h-[260px] overflow-hidden border border-white/15 bg-[#111113] p-6 text-left transition hover:-translate-y-1 hover:border-[#d32632]/70 sm:p-8">
+            <span className="text-[10px] font-bold tracking-[0.24em] text-[#f06a73]">CATALOGUE 02 / CREATIVE</span><span className="absolute right-6 top-6 text-4xl text-white/15">02</span>
+            <div className="mt-12"><h3 className="max-w-xs font-display text-3xl leading-tight sm:text-4xl">Creative Studio</h3><p className="mt-4 max-w-sm text-sm leading-6 text-white/50">Logo design, brand identity, graphic design, marketing materials and youth branding packages.</p></div>
+            <span className="mt-7 inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.16em] text-white">Explore creative services <span className="text-[#f06a73] transition group-hover:translate-x-1">↗</span></span>
+          </button>
+          <button type="button" onClick={() => { setActiveCategory("Lifestyle & merchandise"); document.getElementById("catalogue")?.scrollIntoView({ behavior: "smooth" }); }} className="group relative min-h-[260px] overflow-hidden border border-white/15 bg-[#111113] p-6 text-left transition hover:-translate-y-1 hover:border-[#d32632]/70 sm:p-8">
+            <span className="text-[10px] font-bold tracking-[0.24em] text-[#f06a73]">CATALOGUE 03 / LIFESTYLE</span><span className="absolute right-6 top-6 text-4xl text-white/15">03</span>
+            <div className="mt-12"><h3 className="max-w-xs font-display text-3xl leading-tight sm:text-4xl">Lifestyle, Merchandise &amp; Distribution</h3><p className="mt-4 max-w-sm text-sm leading-6 text-white/50">Apparel, phone cases, personal and tech accessories, lifestyle products, printing and sourcing.</p></div>
+            <span className="mt-7 inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.16em] text-white">Explore products <span className="text-[#f06a73] transition group-hover:translate-x-1">↗</span></span>
+          </button>
+        </div>
+      </section>
+
       <section id="catalogue" className="mx-auto max-w-7xl scroll-mt-10 px-4 py-14 sm:px-8 sm:py-20">
         <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div><p className="text-[10px] font-bold uppercase tracking-[0.28em] text-[#e66a73]">The catalogue</p><h2 className="mt-3 font-display text-4xl tracking-tight sm:text-5xl">Find your next thing.</h2><p className="mt-3 max-w-xl text-sm leading-7 text-white/50">Browse by department or search for a specific service or product.</p></div>
