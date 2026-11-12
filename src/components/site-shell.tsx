@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 const NAV = [
   { href: "/#about", label: "About" },
   { href: "/#projects", label: "Projects" },
-  { href: "/services", label: "EMP SHOP" },
+  { href: "/services", label: "EMP SHOP", logo: true },
   { href: "/#impact", label: "Impact" },
   { href: "/trophies", label: "Brand Branch" },
   { href: "/login", label: "EMP ID" },
@@ -42,7 +42,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           <div>
             <p className="font-display text-lg text-fg">EMP Exclusive</p>
             <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-muted">Ideas Into Impact.</p>
-            <Link to="/services" className="mt-2 inline-flex text-xs text-muted underline decoration-white/20 underline-offset-4 hover:text-fg">EMP SHOP ↗</Link>
+            <Link to="/services" aria-label="EMP Shop" className="mt-2 inline-flex items-center rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#e34242]"><EmpShopLogo className="h-12 w-[4.5rem]" /></Link>
             <p className="mt-3 text-xs">EMPIRE · Francistown · Est. 19 Dec 2024</p>
           </div>
           <div>
@@ -101,6 +101,28 @@ function InstallHouse() {
 
 type BeforeInstallPromptEvent = Event & { prompt: () => Promise<void> };
 
+
+function EmpShopLogo({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 180 112"
+      role="img"
+      aria-label="EMP Shop"
+      className={className}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M48 24L39 11L52 17L61 3L70 17L83 11L74 25L61 30L48 24Z" fill="#F4F4F5" />
+      <path d="M46 29H77" stroke="#F4F4F5" strokeWidth="3" strokeLinecap="round" />
+      <text x="7" y="76" fill="#F4F4F5" fontFamily="Arial, Helvetica, sans-serif" fontSize="61" fontWeight="900" fontStyle="italic" letterSpacing="-7">E</text>
+      <text x="57" y="76" fill="#E32636" fontFamily="Arial, Helvetica, sans-serif" fontSize="61" fontWeight="900" fontStyle="italic" letterSpacing="-7">M</text>
+      <text x="119" y="76" fill="#F4F4F5" fontFamily="Arial, Helvetica, sans-serif" fontSize="61" fontWeight="900" fontStyle="italic" letterSpacing="-7">P</text>
+      <path d="M8 88H39M141 88H172" stroke="#D4D4D8" strokeWidth="2" />
+      <text x="90" y="96" textAnchor="middle" fill="#F4F4F5" fontFamily="Arial, Helvetica, sans-serif" fontSize="18" fontWeight="700" letterSpacing="8">SHOP</text>
+    </svg>
+  );
+}
+
 function Header() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
@@ -118,7 +140,7 @@ function Header() {
               "relative flex h-11 items-center px-3 text-sm transition-colors duration-200",
               pathname === item.href || (item.href === "/trophies" && pathname === "/trophies") ? "text-fg" : "text-muted hover:text-fg",
             )}>
-              {item.label}
+              {item.logo ? <EmpShopLogo className="h-10 w-[3.7rem]" /> : item.label}
             </a>
           ))}
         </nav>
@@ -132,7 +154,7 @@ function Header() {
               <nav className="mt-8 flex flex-col gap-1">
                 {NAV.map((item) => (
                   <a key={item.href} href={item.href} onClick={() => setOpen(false)} className="flex h-12 items-center text-lg text-fg">
-                    {item.label}
+                    {item.logo ? <EmpShopLogo className="h-14 w-20" /> : item.label}
                   </a>
                 ))}
               </nav>
